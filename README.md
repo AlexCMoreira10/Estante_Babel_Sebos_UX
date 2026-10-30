@@ -26,10 +26,23 @@ Antes de usar os novos endpoints no site publicado, publique/deploy as alteraç�
 ## Telas
 
 - `index.html`: página inicial da área de parceiros.
-- `html/login.html`: login por e-mail/senha ou Google, consulta do perfil e redefinição de senha.
+- `html/login.html`: gestores entram por e-mail/senha ou Google; colaboradores entram por login ou telefone e senha temporária.
 - `html/cadastro.html`: cadastro, validação do CNPJ, preenchimento do endereço por CEP (ViaCEP), telefones, horário semanal e geolocalização opcional.
+- `html/subcontas.html`: gestão exclusiva do gestor para criar colaboradores, personalizar permissões, redefinir senhas, reativar e revogar acessos.
 - O horário exige pelo menos um dia aberto. Dias fechados são enviados como `null`; os horários são enviados como `abre` e `fecha`.
 - O CNPJ é validado no navegador para feedback e novamente no backend. A API é a validação definitiva.
+- Colaboradores recebem senha temporária e precisam trocá-la no primeiro login. A revogação bloqueia as rotas protegidas e mantém o cadastro inativo para histórico ou reativação.
+- A interface salva permissões de acervo, negociações e financeiro. As rotas atuais do app de usuários rejeitam tokens de colaboradores; as operações comerciais de acervo/vendas/financeiro para sebos ainda precisam ser implementadas e ligadas a essas permissões.
+
+## Preparar autenticação de colaboradores
+
+O backend exige uma chave dedicada para proteger os CPFs armazenados:
+
+```sh
+openssl rand -base64 32
+```
+
+Configure o valor como `SUBACCOUNT_ENCRYPTION_KEY` no `.env` local e nas variáveis do projeto Vercel. Use o mesmo valor persistentemente nos ambientes que compartilham o Firestore; não gere uma chave nova sem migrar os CPFs já gravados. O CPF completo nunca é exibido na lista de colaboradores.
 
 ## Aplicativo Ionic/Capacitor
 

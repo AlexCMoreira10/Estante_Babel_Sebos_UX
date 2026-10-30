@@ -3,8 +3,10 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
+  onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithCredential,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut
@@ -31,6 +33,8 @@ export const API_BASE = isLocalWeb ? API_LOCAL : API_REMOTE;
 export {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  onAuthStateChanged,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signOut
 };
@@ -97,8 +101,17 @@ export const salvarSessaoSebo = async (usuario, perfil) => {
   localStorage.setItem('sebo', JSON.stringify({
     uid: usuario.uid,
     nome: perfil.nome || usuario.displayName || usuario.email,
-    email: perfil.email || usuario.email,
-    foto: usuario.photoURL || ''
+    email: perfil.email || perfil.login || usuario.email || '',
+    foto: usuario.photoURL || '',
+    tipoConta: perfil.tipoConta || 'gestor',
+    seboId: perfil.seboId || usuario.uid,
+    seboNome: perfil.seboNome || perfil.nome || '',
+    login: perfil.login || '',
+    telefone: perfil.telefone || '',
+    cpf: perfil.cpf || '',
+    tipo: perfil.tipo || '',
+    permissoes: perfil.permissoes || [],
+    precisaTrocarSenha: Boolean(perfil.precisaTrocarSenha)
   }));
 };
 

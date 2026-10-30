@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Colaboradores | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <nav class="header-actions">
+          <a class="text-link" href="../index.html"><ion-icon name="arrow-back-outline"></ion-icon> Painel do sebo</a>
+        </nav>
+      </header>
+
+      <main class="staff-layout">
+        <section class="staff-heading">
+          <p class="eyebrow">Acesso da equipe</p>
+          <h1>Colaboradores</h1>
+          <p>Crie acessos individuais, escolha o que cada pessoa pode fazer e revogue o acesso quando precisar.</p>
+        </section>
+
+        <p id="pageFeedback" class="feedback" role="status" aria-live="polite"></p>
+
+        <section id="staffManagement" class="staff-management hidden">
+          <article class="auth-card staff-form-card">
+            <div class="auth-card-heading">
+              <span class="eyebrow">Nova subconta</span>
+              <h2 id="formTitle">Adicionar colaborador</h2>
+              <p>O colaborador entra com o login ou telefone e a senha temporária.</p>
+            </div>
+            <form id="staffForm" class="form-stack">
+              <div class="form-grid">
+                <div class="form-group span-2">
+                  <label for="staffName">Nome do colaborador *</label>
+                  <input id="staffName" name="nome" type="text" autocomplete="name" maxlength="120" required>
+                </div>
+                <div class="form-group">
+                  <label for="staffLogin">Login único *</label>
+                  <input id="staffLogin" name="login" type="text" autocomplete="off" minlength="3" maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" aria-describedby="loginHint" required>
+                  <span id="loginHint" class="field-hint">3 a 32 caracteres: letras, números, ponto, hífen ou sublinhado.</span>
+                </div>
+                <div class="form-group">
+                  <label for="staffPhone">Telefone (opcional)</label>
+                  <input id="staffPhone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="(11) 99999-9999">
+                </div>
+                <div id="cpfGroup" class="form-group">
+                  <label for="staffCpf">CPF *</label>
+                  <input id="staffCpf" name="cpf" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" required>
+                </div>
+                <div id="passwordGroup" class="form-group">
+                  <label for="temporaryPassword">Senha temporária *</label>
+                  <input id="temporaryPassword" name="senhaTemporaria" type="password" autocomplete="new-password" minlength="10" maxlength="128" required>
+                  <span class="field-hint">O colaborador deverá criar uma senha pessoal no primeiro acesso.</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="staffType">Tipo de subconta</label>
+                <select id="staffType" name="tipo">
+                  <option value="cadastrador_acervo">Cadastrador de acervo</option>
+                  <option value="operador_negociacoes">Operador de vendas e trocas</option>
+                  <option value="gestor_financeiro">Gestor financeiro</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+                <span class="field-hint">O tipo marca um conjunto inicial de permissões; você pode personalizar o checklist abaixo.</span>
+              </div>
+
+              <fieldset class="permissions-section">
+                <legend>O que este colaborador pode fazer?</legend>
+                <div class="permission-group">
+                  <h3>Acervo</h3>
+                  <label><input type="checkbox" data-permission="acervo.consultar"> Consultar acervo</label>
+                  <label><input type="checkbox" data-permission="acervo.cadastrar"> Cadastrar livros</label>
+                  <label><input type="checkbox" data-permission="acervo.editar"> Editar livros</label>
+                  <label><input type="checkbox" data-permission="acervo.excluir"> Excluir livros</label>
+                </div>
+                <div class="permission-group">
+                  <h3>Vendas e trocas</h3>
+                  <label><input type="checkbox" data-permission="negociacoes.consultar"> Consultar negociações</label>
+                  <label><input type="checkbox" data-permission="negociacoes.gerenciar"> Gerenciar vendas e trocas</label>
+                </div>
+                <div class="permission-group">
+                  <h3>Financeiro</h3>
+                  <label><input type="checkbox" data-permission="financeiro.consultar"> Consultar informações financeiras</label>
+                  <label><input type="checkbox" data-permission="financeiro.relatorios"> Acessar relatórios financeiros</label>
+                </div>
+              </fieldset>
+
+              <p id="formFeedback" class="feedback" role="status" aria-live="polite"></p>
+              <div class="staff-form-actions">
+                <button id="submitStaff" class="button button-primary" type="submit">Criar subconta</button>
+                <button id="cancelEdit" class="button button-secondary hidden" type="button">Cancelar edição</button>
+              </div>
+            </form>
+          </article>
+
+          <section class="staff-list-section">
+            <div class="staff-list-heading">
+              <div>
+                <p class="eyebrow">Equipe do estabelecimento</p>
+                <h2>Contas e permissões</h2>
+              </div>
+              <button id="reloadStaff" class="button button-secondary button-small" type="button">Atualizar lista</button>
+            </div>
+            <div id="staffList" class="staff-list" aria-live="polite"></div>
+          </section>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+
+      <dialog id="passwordDialog" class="password-dialog">
+        <form id="resetPasswordForm" class="form-stack">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Acesso do colaborador</span>
+            <h2>Redefinir senha</h2>
+            <p>A nova senha será temporária e deverá ser trocada no próximo acesso.</p>
+          </div>
+          <div class="form-group">
+            <label for="resetPassword">Nova senha temporária</label>
+            <input id="resetPassword" type="password" autocomplete="new-password" minlength="10" maxlength="128" required>
+          </div>
+          <p id="passwordFeedback" class="feedback" role="status" aria-live="polite"></p>
+          <div class="staff-form-actions">
+            <button id="confirmResetPassword" class="button button-primary" type="submit">Redefinir senha</button>
+            <button id="closePasswordDialog" class="button button-secondary" type="button">Cancelar</button>
+          </div>
+        </form>
+      </dialog>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/subcontas.js"></script>
+</body>
+</html>

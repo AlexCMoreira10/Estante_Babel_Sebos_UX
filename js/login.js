@@ -6,6 +6,7 @@ import {
   requisicaoSebo,
   salvarSessaoSebo,
   sendPasswordResetEmail,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signOut
 } from './firebase.js';
@@ -37,6 +38,21 @@ const entrarNoApp = async (usuario) => {
   window.location.replace('../index.html');
 };
 
+const entrarComoColaborador = async (identificador, senha) => {
+  const { customToken, subconta } = await requisicaoSebo('sebos/subcontas/login', {
+    method: 'POST',
+    body: JSON.stringify({ identificador, senha })
+  });
+  const credencial = await signInWithCustomToken(auth, customToken);
+  const perfil = {
+    ...subconta,
+    tipoConta: 'subconta',
+    email: subconta.login
+  };
+  await salvarSessaoSebo(credencial.user, perfil);
+  window.location.replace('../index.html');
+};
+
 const tratarErroLogin = async (erro) => {
   console.error('Erro ao entrar na área do sebo:', erro);
   if (erro.status === 404) {
@@ -60,12 +76,17 @@ loginForm.addEventListener('submit', async (evento) => {
   atualizarBotoes(true);
   mostrarFeedback('Entrando na sua conta...');
   try {
-    const resultado = await signInWithEmailAndPassword(
-      auth,
-      emailInput.value.trim(),
-      passwordInput.value
-    );
-    await entrarNoApp(resultado.user);
+    const identificador = emailInput.value.trim();
+    if (identificador.includes('@')) {
+      const resultado = await signInWithEmailAndPassword(
+        auth,
+        identificador,
+        passwordInput.value
+      );
+      await entrarNoApp(resultado.user);
+    } else {
+      await entrarComoColaborador(identificador, passwordInput.value);
+    }
   } catch (erro) {
     await tratarErroLogin(erro);
     atualizarBotoes(false);
@@ -86,11 +107,8 @@ googleButton.addEventListener('click', async () => {
 
 resetButton.addEventListener('click', async () => {
   const email = emailInput.value.trim();
-  if (!email) {
-    emailInput.setCustomValidity('Informe seu e-mail para receber o link de redefinição.');
-    emailInput.reportValidity();
-    emailInput.setCustomValidity('');
-    emailInput.focus();
+  if (!email.includes('@')) {
+    mostrarFeedback('Para redefinir a senha de colaborador, solicite uma nova senha temporária ao gestor do sebo.', 'erro');
     return;
   }
 
