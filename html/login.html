@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Entrar | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <a class="text-link" href="../index.html"><ion-icon name="arrow-back-outline"></ion-icon> Início</a>
+      </header>
+
+      <main class="auth-layout login-layout">
+        <section class="auth-intro">
+          <p class="eyebrow">Que bom ter você de volta</p>
+          <h1>Seu próximo capítulo começa aqui.</h1>
+          <p>Entre para continuar aproximando seu sebo de quem ama livros.</p>
+          <div class="intro-decoration" aria-hidden="true">
+            <ion-icon name="book-outline"></ion-icon>
+            <ion-icon name="book-outline"></ion-icon>
+            <ion-icon name="book-outline"></ion-icon>
+          </div>
+        </section>
+
+        <section class="auth-card" aria-labelledby="loginTitle">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Área do parceiro</span>
+            <h2 id="loginTitle">Bem-vindo!</h2>
+            <p>Entre na sua conta para continuar.</p>
+          </div>
+
+          <form id="loginForm" class="form-stack">
+            <div class="form-group">
+              <label for="loginEmail">E-mail</label>
+              <input id="loginEmail" name="email" type="email" autocomplete="username" placeholder="Digite seu e-mail" maxlength="254" required>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Senha</label>
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+            </div>
+            <button id="forgotPassword" class="text-link forgot-link" type="button">Esqueceu sua senha?</button>
+            <p id="loginFeedback" class="feedback" role="status" aria-live="polite"></p>
+            <button id="loginSubmit" class="button button-primary button-full" type="submit">Entrar</button>
+          </form>
+
+          <div class="auth-divider"><span>ou</span></div>
+          <button id="googleLogin" class="button button-google button-full" type="button">
+            <ion-icon name="logo-google"></ion-icon> Continuar com Google
+          </button>
+          <p class="auth-switch">Seu sebo ainda não faz parte da Estante?<br>
+            <a href="./cadastro.html">Solicitar cadastro</a>
+          </p>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/login.js"></script>
+</body>
+</html>

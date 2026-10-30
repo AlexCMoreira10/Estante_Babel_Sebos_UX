@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Cadastrar sebo | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <a class="text-link" href="../index.html"><ion-icon name="arrow-back-outline"></ion-icon> Início</a>
+      </header>
+
+      <main class="register-layout">
+        <section class="register-intro">
+          <p class="eyebrow">Faça parte da Estante!</p>
+          <h1>Conecte seu sebo a novos leitores.</h1>
+          <p>Preencha os dados do estabelecimento. O CNPJ será validado antes do cadastro.</p>
+        </section>
+
+        <section class="auth-card register-card" aria-labelledby="registerTitle">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Cadastro de parceiro</span>
+            <h2 id="registerTitle">Cadastro do sebo</h2>
+            <p>Os campos com * são obrigatórios.</p>
+          </div>
+
+          <form id="registerForm" class="form-stack" novalidate>
+            <fieldset class="form-section">
+              <legend><span class="section-number">1</span> Dados do estabelecimento</legend>
+              <div class="form-grid">
+                <div class="form-group span-2">
+                  <label for="nome">Nome do sebo *</label>
+                  <input id="nome" name="nome" type="text" autocomplete="organization" maxlength="120" placeholder="Ex.: Sebo das Letras" required>
+                </div>
+                <div class="form-group">
+                  <label for="cnpj">CNPJ *</label>
+                  <input id="cnpj" name="cnpj" type="text" inputmode="text" autocomplete="off" maxlength="18" placeholder="00.000.000/0000-00" aria-describedby="cnpjHint" required>
+                  <span id="cnpjHint" class="field-hint">Aceita o formato numérico e o novo formato alfanumérico.</span>
+                </div>
+                <div class="form-group">
+                  <label for="email">E-mail comercial *</label>
+                  <input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="contato@sebo.com.br" required>
+                </div>
+                <div class="form-group span-2" id="passwordFields">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="senha">Senha *</label>
+                      <input id="senha" name="senha" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="confirmarSenha">Confirmar senha *</label>
+                      <input id="confirmarSenha" name="confirmarSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Repita a senha" required>
+                    </div>
+                  </div>
+                  <p id="googleAccountNote" class="field-hint hidden">Conta Google selecionada. O e-mail será usado para entrar.</p>
+                  <button id="cancelGoogleSignup" class="text-link hidden" type="button">Usar e-mail e senha</button>
+                </div>
+                <div class="form-group span-2">
+                  <label>Telefone para contato *</label>
+                  <div id="phonesList" class="phone-list">
+                    <div class="phone-row">
+                      <input name="telefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" aria-label="Telefone para contato" required>
+                    </div>
+                  </div>
+                  <button id="addPhone" class="text-link inline-action" type="button"><ion-icon name="add-circle-outline"></ion-icon> Adicionar outro telefone</button>
+                </div>
+              </div>
+              <button id="googleSignup" class="button button-google button-full" type="button">
+                <ion-icon name="logo-google"></ion-icon> Cadastrar usando Google
+              </button>
+              <p class="field-hint">Você também pode criar uma conta com e-mail e senha nos campos acima.</p>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend><span class="section-number">2</span> Endereço do sebo</legend>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="cep">CEP *</label>
+                  <div class="cep-row">
+                    <input id="cep" name="cep" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" aria-describedby="cepFeedback" required>
+                    <button id="lookupCep" class="button button-secondary button-small" type="button">Buscar CEP</button>
+                  </div>
+                  <span id="cepFeedback" class="field-hint" role="status" aria-live="polite"></span>
+                </div>
+                <div class="form-group">
+                  <label for="estado">Estado (UF) *</label>
+                  <input id="estado" name="estado" type="text" autocomplete="address-level1" maxlength="2" placeholder="SP" required>
+                </div>
+                <div class="form-group span-2">
+                  <label for="rua">Rua / logradouro *</label>
+                  <input id="rua" name="rua" type="text" autocomplete="street-address" maxlength="160" placeholder="Rua, avenida, praça..." required>
+                </div>
+                <div class="form-group">
+                  <label for="numero">Número *</label>
+                  <input id="numero" name="numero" type="text" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="123" required>
+                </div>
+                <div class="form-group">
+                  <label for="complemento">Complemento</label>
+                  <input id="complemento" name="complemento" type="text" maxlength="100" placeholder="Loja, sala...">
+                </div>
+                <div class="form-group">
+                  <label for="bairro">Bairro *</label>
+                  <input id="bairro" name="bairro" type="text" autocomplete="address-level3" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                  <label for="cidade">Cidade *</label>
+                  <input id="cidade" name="cidade" type="text" autocomplete="address-level2" maxlength="100" required>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend><span class="section-number">3</span> Horário de funcionamento</legend>
+              <p class="section-help">Selecione os dias em que o sebo abre e defina os horários. Deixe desmarcado nos dias fechados.</p>
+              <div class="schedule-list">
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="segunda"><span>Segunda-feira</span></label>
+                  <div class="schedule-times"><input type="time" data-open="segunda" aria-label="Abertura segunda-feira" disabled><span>às</span><input type="time" data-close="segunda" aria-label="Fechamento segunda-feira" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="terca"><span>Terça-feira</span></label>
+                  <div class="schedule-times"><input type="time" data-open="terca" aria-label="Abertura terça-feira" disabled><span>às</span><input type="time" data-close="terca" aria-label="Fechamento terça-feira" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="quarta"><span>Quarta-feira</span></label>
+                  <div class="schedule-times"><input type="time" data-open="quarta" aria-label="Abertura quarta-feira" disabled><span>às</span><input type="time" data-close="quarta" aria-label="Fechamento quarta-feira" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="quinta"><span>Quinta-feira</span></label>
+                  <div class="schedule-times"><input type="time" data-open="quinta" aria-label="Abertura quinta-feira" disabled><span>às</span><input type="time" data-close="quinta" aria-label="Fechamento quinta-feira" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="sexta"><span>Sexta-feira</span></label>
+                  <div class="schedule-times"><input type="time" data-open="sexta" aria-label="Abertura sexta-feira" disabled><span>às</span><input type="time" data-close="sexta" aria-label="Fechamento sexta-feira" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="sabado"><span>Sábado</span></label>
+                  <div class="schedule-times"><input type="time" data-open="sabado" aria-label="Abertura sábado" disabled><span>às</span><input type="time" data-close="sabado" aria-label="Fechamento sábado" disabled></div>
+                </div>
+                <div class="schedule-row">
+                  <label class="day-toggle"><input type="checkbox" data-day="domingo"><span>Domingo</span></label>
+                  <div class="schedule-times"><input type="time" data-open="domingo" aria-label="Abertura domingo" disabled><span>às</span><input type="time" data-close="domingo" aria-label="Fechamento domingo" disabled></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend><span class="section-number">4</span> Localização aproximada <span class="legend-optional">(opcional)</span></legend>
+              <p class="section-help">Compartilhe as coordenadas do estabelecimento para facilitar buscas por proximidade. A localização só será obtida com sua autorização.</p>
+              <button id="useLocation" class="button button-secondary button-small" type="button"><ion-icon name="locate-outline"></ion-icon> Usar localização atual</button>
+              <span id="locationFeedback" class="field-hint" role="status" aria-live="polite"></span>
+              <div class="form-grid coordinate-grid">
+                <div class="form-group">
+                  <label for="longitude">Longitude</label>
+                  <input id="longitude" type="number" min="-180" max="180" step="any" placeholder="-46.6333">
+                </div>
+                <div class="form-group">
+                  <label for="latitude">Latitude</label>
+                  <input id="latitude" type="number" min="-90" max="90" step="any" placeholder="-23.5505">
+                </div>
+              </div>
+            </fieldset>
+
+            <p id="registerFeedback" class="feedback" role="status" aria-live="polite"></p>
+            <button id="registerSubmit" class="button button-primary button-full" type="submit">Solicitar cadastro</button>
+          </form>
+          <p class="auth-switch">Já tem conta? <a href="./login.html">Entrar</a></p>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/cadastro.js"></script>
+</body>
+</html>

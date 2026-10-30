@@ -1,0 +1,21 @@
+{
+  "name": "estante-babel-sebos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "cap:sync": "npm run build && cap sync",
+    "android:add": "npm run build && cap add android",
+    "ios:add": "npm run build && cap add ios"
+  },
+  "dependencies": {
+    "@capacitor-firebase/authentication": "^8.5.2",
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2"
+  }
+}
