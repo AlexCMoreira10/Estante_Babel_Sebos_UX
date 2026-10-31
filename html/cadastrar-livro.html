@@ -132,9 +132,15 @@
               <input id="bookQuantity" name="quantidadeEstoque" type="number" min="1" step="1" value="1" required>
             </div>
             <div class="form-group">
-              <label for="bookImages">Imagens do livro</label>
+              <label for="bookImages">Enviar imagens do dispositivo</label>
               <input id="bookImages" name="fotos" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="bookImagesHint">
               <span id="bookImagesHint" class="field-hint">Adicione até 5 imagens JPEG, PNG ou WebP. Cada imagem pode ter até 4 MB.</span>
+            </div>
+            <div class="form-group">
+              <label for="bookImageUrl">Ou adicionar imagem por URL</label>
+              <input id="bookImageUrl" type="url" inputmode="url" placeholder="https://exemplo.com/capa.jpg" aria-describedby="bookImageUrlHint">
+              <span id="bookImageUrlHint" class="field-hint">Informe uma URL HTTPS pública e direta para a imagem. O limite de 5 imagens é compartilhado com os arquivos enviados.</span>
+              <button id="addBookImageUrl" class="button button-secondary button-small" type="button">Adicionar URL</button>
               <div id="bookImagePreview" class="book-image-preview" aria-live="polite"></div>
             </div>
             <p id="bookFeedback" class="feedback" role="status" aria-live="polite"></p>

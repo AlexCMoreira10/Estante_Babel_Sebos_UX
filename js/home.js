@@ -7,6 +7,7 @@ import {
   signOut
 } from './firebase.js';
 import { adicionarAcaoAnunciosEmMassa } from './anuncio-em-massa.js';
+import { adicionarSecaoLivrosPerfil } from './livros-perfil.js';
 
 const painel = document.getElementById('partnerPanel');
 const navegacao = document.querySelector('.header-actions');
@@ -142,6 +143,7 @@ const renderizarSessao = (usuario, perfil) => {
   const cadastrarLivro = criar('a', 'button button-secondary button-full', 'Cadastrar livros');
   cadastrarLivro.href = './html/cadastrar-livro.html';
   painel.append(cadastrarLivro);
+  adicionarSecaoLivrosPerfil(painel, () => usuario);
   adicionarAcaoAnunciosEmMassa(painel, () => usuario);
   painel.append(gerenciar);
 };

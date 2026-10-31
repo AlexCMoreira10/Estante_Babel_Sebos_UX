@@ -16,11 +16,14 @@ const priceInput = document.getElementById('bookPrice');
 const backLink = document.getElementById('backLink');
 const yearInput = document.getElementById('bookYear');
 const imageInput = document.getElementById('bookImages');
+const imageUrlInput = document.getElementById('bookImageUrl');
+const addImageUrlButton = document.getElementById('addBookImageUrl');
 const imagePreview = document.getElementById('bookImagePreview');
 const MAX_IMAGES = 5;
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 let selectedImages = [];
+let selectedImageUrls = [];
 let usuarioAtual;
 submitButton.disabled = true;
 yearInput.max = String(new Date().getFullYear());
@@ -50,31 +53,51 @@ atualizarTipoAnuncio();
 
 const renderizarImagens = () => {
   imagePreview.replaceChildren();
-  selectedImages.forEach(({ file, previewUrl }, index) => {
+  const adicionarPrevia = ({ src, alt, removerImagem }) => {
     const item = document.createElement('div');
     item.className = 'book-image-item';
     const imagem = document.createElement('img');
-    imagem.src = previewUrl;
-    imagem.alt = `Prévia da imagem ${index + 1}: ${file.name}`;
+    imagem.src = src;
+    imagem.alt = alt;
+    imagem.loading = 'lazy';
+    imagem.referrerPolicy = 'no-referrer';
     const remover = document.createElement('button');
     remover.className = 'book-image-remove';
     remover.type = 'button';
-    remover.setAttribute('aria-label', `Remover imagem ${file.name}`);
+    remover.setAttribute('aria-label', `Remover ${alt}`);
     remover.textContent = '×';
-    remover.addEventListener('click', () => {
-      URL.revokeObjectURL(previewUrl);
-      selectedImages = selectedImages.filter((_, indice) => indice !== index);
-      renderizarImagens();
-    });
+    remover.addEventListener('click', removerImagem);
     item.append(imagem, remover);
     imagePreview.append(item);
+  };
+
+  selectedImages.forEach((selecionada) => {
+    adicionarPrevia({
+      src: selecionada.previewUrl,
+      alt: `a imagem ${selecionada.file.name}`,
+      removerImagem: () => {
+        URL.revokeObjectURL(selecionada.previewUrl);
+        selectedImages = selectedImages.filter((imagem) => imagem !== selecionada);
+        renderizarImagens();
+      }
+    });
+  });
+  selectedImageUrls.forEach((url) => {
+    adicionarPrevia({
+      src: url,
+      alt: 'a imagem por URL',
+      removerImagem: () => {
+        selectedImageUrls = selectedImageUrls.filter((imagemUrl) => imagemUrl !== url);
+        renderizarImagens();
+      }
+    });
   });
 };
 
 imageInput.addEventListener('change', () => {
   const novasImagens = [...imageInput.files];
   imageInput.value = '';
-  if (selectedImages.length + novasImagens.length > MAX_IMAGES) {
+  if (selectedImages.length + selectedImageUrls.length + novasImagens.length > MAX_IMAGES) {
     mostrarFeedback(`É possível adicionar no máximo ${MAX_IMAGES} imagens.`, 'erro');
     return;
   }
@@ -94,6 +117,34 @@ imageInput.addEventListener('change', () => {
     file,
     previewUrl: URL.createObjectURL(file)
   })));
+  renderizarImagens();
+});
+
+addImageUrlButton.addEventListener('click', () => {
+  const urlInformada = imageUrlInput.value.trim();
+  let url;
+  try {
+    url = new URL(urlInformada);
+  } catch {
+    mostrarFeedback('Informe uma URL HTTPS válida para a imagem.', 'erro');
+    return;
+  }
+  if (url.protocol !== 'https:' || !url.hostname || url.username || url.password) {
+    mostrarFeedback('A URL da imagem deve usar HTTPS e não pode conter usuário ou senha.', 'erro');
+    return;
+  }
+  if (selectedImages.length + selectedImageUrls.length >= MAX_IMAGES) {
+    mostrarFeedback(`É possível adicionar no máximo ${MAX_IMAGES} imagens.`, 'erro');
+    return;
+  }
+  if (selectedImageUrls.includes(url.href)) {
+    mostrarFeedback('Essa URL já foi adicionada.', 'erro');
+    return;
+  }
+
+  selectedImageUrls.push(url.href);
+  imageUrlInput.value = '';
+  mostrarFeedback('');
   renderizarImagens();
 });
 
@@ -175,7 +226,10 @@ form.addEventListener('submit', async (evento) => {
       imagensEnviadas.push(resultado);
     }
 
-    dados.fotos = imagensEnviadas.map(({ url }) => url);
+    dados.fotos = [
+      ...imagensEnviadas.map(({ url }) => url),
+      ...selectedImageUrls
+    ];
     mostrarFeedback('Salvando cadastro do livro...');
     await requisicaoSebo('sebos/livros', {
       method: 'POST',
@@ -185,6 +239,8 @@ form.addEventListener('submit', async (evento) => {
     mostrarFeedback('Livro cadastrado no acervo do sebo.', 'sucesso');
     selectedImages.forEach(({ previewUrl }) => URL.revokeObjectURL(previewUrl));
     selectedImages = [];
+    selectedImageUrls = [];
+    imageUrlInput.value = '';
     renderizarImagens();
     form.reset();
     atualizarTipoAnuncio();

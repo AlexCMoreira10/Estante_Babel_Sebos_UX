@@ -7,6 +7,7 @@ import {
   signOut
 } from './firebase.js';
 import { adicionarAcaoAnunciosEmMassa } from './anuncio-em-massa.js';
+import { adicionarSecaoLivrosPerfil } from './livros-perfil.js';
 
 const logoutButton = document.getElementById('logoutButton');
 const greeting = document.getElementById('employeeGreeting');
@@ -135,6 +136,9 @@ const renderizarArea = (perfil, usuario) => {
     cadastrarLivro.href = './cadastrar-livro.html';
     panel.append(cadastrarLivro);
     adicionarAcaoAnunciosEmMassa(panel, () => usuario);
+  }
+  if ((perfil.permissoes || []).includes('acervo.consultar')) {
+    adicionarSecaoLivrosPerfil(panel, () => usuario);
   }
   panel.append(criar('h3', 'access-heading', 'Acessos habilitados'));
   const lista = criar('ul', 'permission-list');
