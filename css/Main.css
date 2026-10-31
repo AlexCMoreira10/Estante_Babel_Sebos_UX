@@ -219,6 +219,11 @@ input:focus-visible {
   padding: 64px 0;
 }
 
+.home-main.signed-in-home {
+  grid-template-columns: minmax(0, 560px);
+  justify-content: center;
+}
+
 .home-copy {
   max-width: 600px;
 }

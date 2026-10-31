@@ -9,6 +9,8 @@ import {
 
 const painel = document.getElementById('partnerPanel');
 const navegacao = document.querySelector('.header-actions');
+const conteudoInicial = document.querySelector('.home-copy');
+const paginaInicial = document.querySelector('.home-main');
 const nomesPermissoes = {
   'acervo.consultar': 'Consultar acervo',
   'acervo.cadastrar': 'Cadastrar livros',
@@ -103,9 +105,12 @@ const renderizarSessao = (usuario, perfil) => {
   botaoSair.addEventListener('click', () => sair(botaoSair));
   navegacao.replaceChildren(botaoSair);
 
+  conteudoInicial.hidden = true;
+  paginaInicial.classList.add('signed-in-home');
   painel.replaceChildren();
   painel.classList.add('signed-in-panel');
   painel.append(
+    criar('p', 'eyebrow', 'Perfil do sebo'),
     criar('h2', '', `Olá, ${perfil.nome || perfil.login || 'parceiro'}!`),
     criar('p', '', perfil.tipoConta === 'subconta'
       ? `Colaborador de ${perfil.seboNome || 'seu sebo'}`
