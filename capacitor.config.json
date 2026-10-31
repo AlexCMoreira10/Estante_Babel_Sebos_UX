@@ -1,5 +1,10 @@
 {
   "appId": "br.com.estantebabel.sebos",
   "appName": "Estante Parceiros",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "providers": ["google.com"]
+    }
+  }
 }

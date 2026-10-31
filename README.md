@@ -88,6 +88,30 @@ As páginas usam Ionic Core como Web Components, mantendo os arquivos HTML/CSS/J
 2. Crie o projeto Android com `npm run android:add` ou o projeto iOS com `npm run ios:add`; esses scripts geram os arquivos web antes de adicionar a plataforma.
 3. Copie a configuração Firebase da plataforma (`google-services.json` para Android e `GoogleService-Info.plist` para iOS), configure os domínios/autenticação no Firebase e sincronize com `npm run cap:sync`.
 npm run android:add
+
+### Cadastrar SHA-1 e SHA-256 no Firebase (Android)
+
+Os fingerprints SHA-1 e SHA-256 identificam o certificado que assina o app. Para obter os fingerprints de desenvolvimento, primeiro gere a plataforma Android, se ainda não existir (`npm run android:add`), e execute o relatório de assinatura na raiz do projeto:
+
+```sh
+cd android
+./gradlew signingReport
+```
+
+No Windows, dentro da pasta `android`, execute:
+
+```bat
+gradlew.bat signingReport
+```
+
+No resultado, localize a seção `Variant: debug` e copie os valores `SHA1` e `SHA-256`. Se ainda não houver certificado de depuração, gere um build debug no Android Studio ou execute `./gradlew assembleDebug` (Windows: `gradlew.bat assembleDebug`) e rode novamente o relatório.
+
+No Firebase Console, abra **Configurações do projeto > Seus apps**, selecione o app Android com o mesmo identificador de pacote configurado em `android/app/build.gradle` e adicione os dois fingerprints. Para o login Google, confirme também que o provedor Google está habilitado em **Authentication > Provedores de login**. Baixe o `google-services.json` atualizado para esse app, salve-o em `android/app/google-services.json` e execute `npm run cap:sync`.
+
+O `capacitor.config.json` também precisa listar `google.com` em `plugins.FirebaseAuthentication.providers`. Após alterar essa configuração, execute `npm run cap:sync` e gere/instale novamente o app Android; recarregar apenas a página no dispositivo não atualiza a configuração nativa.
+
+Os fingerprints de debug servem para testes locais. Para publicar, cadastre também os fingerprints do certificado de release. Se a distribuição for feita pela Google Play com Play App Signing, use os fingerprints do certificado de assinatura de apps exibidos no Play Console. Não compartilhe nem versione arquivos de chave privada (`.jks`/`.keystore`) ou suas senhas.
+
 O build web continua sendo HTML/CSS/JavaScript e pode ser hospedado estaticamente a partir da raiz do projeto. Para compilar os instaladores nativos, também é necessário ter o Android Studio/SDK ou Xcode instalado e configurado.
 
 O fluxo do aplicativo salva a sessão nos itens `sebo` e `seboToken` do `localStorage`, sem reutilizar as chaves do app de usuários. O endpoint e a estrutura das requisições estão documentados no [README do backend](../../Node/backend_v6/README.md) e no [API.md](./API.md).
