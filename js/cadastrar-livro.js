@@ -15,6 +15,12 @@ const priceGroup = document.getElementById('bookPriceGroup');
 const priceInput = document.getElementById('bookPrice');
 const backLink = document.getElementById('backLink');
 const yearInput = document.getElementById('bookYear');
+const imageInput = document.getElementById('bookImages');
+const imagePreview = document.getElementById('bookImagePreview');
+const MAX_IMAGES = 5;
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+let selectedImages = [];
 let usuarioAtual;
 submitButton.disabled = true;
 yearInput.max = String(new Date().getFullYear());
@@ -41,6 +47,55 @@ const atualizarTipoAnuncio = () => {
 
 typeSelect.addEventListener('change', atualizarTipoAnuncio);
 atualizarTipoAnuncio();
+
+const renderizarImagens = () => {
+  imagePreview.replaceChildren();
+  selectedImages.forEach(({ file, previewUrl }, index) => {
+    const item = document.createElement('div');
+    item.className = 'book-image-item';
+    const imagem = document.createElement('img');
+    imagem.src = previewUrl;
+    imagem.alt = `Prévia da imagem ${index + 1}: ${file.name}`;
+    const remover = document.createElement('button');
+    remover.className = 'book-image-remove';
+    remover.type = 'button';
+    remover.setAttribute('aria-label', `Remover imagem ${file.name}`);
+    remover.textContent = '×';
+    remover.addEventListener('click', () => {
+      URL.revokeObjectURL(previewUrl);
+      selectedImages = selectedImages.filter((_, indice) => indice !== index);
+      renderizarImagens();
+    });
+    item.append(imagem, remover);
+    imagePreview.append(item);
+  });
+};
+
+imageInput.addEventListener('change', () => {
+  const novasImagens = [...imageInput.files];
+  imageInput.value = '';
+  if (selectedImages.length + novasImagens.length > MAX_IMAGES) {
+    mostrarFeedback(`É possível adicionar no máximo ${MAX_IMAGES} imagens.`, 'erro');
+    return;
+  }
+  const imagemInvalida = novasImagens.find(({ type, size }) =>
+    !ALLOWED_IMAGE_TYPES.has(type) || size > MAX_IMAGE_SIZE
+  );
+  if (imagemInvalida) {
+    mostrarFeedback(
+      `${imagemInvalida.name}: use uma imagem JPEG, PNG ou WebP de até 4 MB.`,
+      'erro'
+    );
+    return;
+  }
+
+  mostrarFeedback('');
+  selectedImages.push(...novasImagens.map((file) => ({
+    file,
+    previewUrl: URL.createObjectURL(file)
+  })));
+  renderizarImagens();
+});
 
 const iniciar = async () => {
   const usuario = await aguardarUsuario();
@@ -106,20 +161,49 @@ form.addEventListener('submit', async (evento) => {
     quantidadeEstoque: Number(document.getElementById('bookQuantity').value)
   };
 
+  const imagensEnviadas = [];
   submitButton.disabled = true;
-  mostrarFeedback('Cadastrando livro...');
+  mostrarFeedback(selectedImages.length ? 'Enviando imagens do livro...' : 'Cadastrando livro...');
   try {
+    for (const { file } of selectedImages) {
+      const resultado = await requisicaoSebo('sebos/livros/imagens', {
+        method: 'POST',
+        token: await usuarioAtual.getIdToken(),
+        headers: { 'Content-Type': file.type },
+        body: file
+      });
+      imagensEnviadas.push(resultado);
+    }
+
+    dados.fotos = imagensEnviadas.map(({ url }) => url);
+    mostrarFeedback('Salvando cadastro do livro...');
     await requisicaoSebo('sebos/livros', {
       method: 'POST',
       token: await usuarioAtual.getIdToken(),
       body: JSON.stringify(dados)
     });
     mostrarFeedback('Livro cadastrado no acervo do sebo.', 'sucesso');
+    selectedImages.forEach(({ previewUrl }) => URL.revokeObjectURL(previewUrl));
+    selectedImages = [];
+    renderizarImagens();
     form.reset();
     atualizarTipoAnuncio();
     yearInput.max = String(new Date().getFullYear());
   } catch (erro) {
     console.error('Erro ao cadastrar livro do sebo:', erro);
+    if (imagensEnviadas.length) {
+      try {
+        await requisicaoSebo('sebos/livros/imagens', {
+          method: 'DELETE',
+          token: await usuarioAtual.getIdToken(),
+          body: JSON.stringify({
+            paths: imagensEnviadas.map(({ path }) => path)
+          })
+        });
+      } catch (erroLimpeza) {
+        console.error('Não foi possível remover imagens após falha no cadastro:', erroLimpeza);
+      }
+    }
     mostrarFeedback(erro.message || 'Não foi possível cadastrar o livro.', 'erro');
   } finally {
     submitButton.disabled = false;

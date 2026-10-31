@@ -95,6 +95,43 @@ export const requisicaoSebo = async (caminho, { token, ...opcoes } = {}) => {
   return corpo;
 };
 
+export const requisicaoSeboArquivo = async (caminho, { token, ...opcoes } = {}) => {
+  const headers = new Headers(opcoes.headers || {});
+  if (token) headers.set('Authorization', 'Bearer ' + token);
+
+  const urls = API_BASE === API_LOCAL ? [API_LOCAL, API_REMOTE] : [API_REMOTE];
+  let resposta;
+  for (let indice = 0; indice < urls.length; indice += 1) {
+    try {
+      resposta = await fetch(`${urls[indice]}/${caminho}`, { ...opcoes, headers });
+      break;
+    } catch (erro) {
+      if (indice === urls.length - 1) throw erro;
+      console.warn('A API local não respondeu; tentando a API publicada.', erro);
+    }
+  }
+
+  if (!resposta.ok) {
+    const texto = await resposta.text();
+    let corpo = {};
+    if (texto) {
+      try {
+        corpo = JSON.parse(texto);
+      } catch {
+        corpo = { erro: texto };
+      }
+    }
+    const erro = new Error(corpo.erro || corpo.message || `A API respondeu com HTTP ${resposta.status}.`);
+    erro.status = resposta.status;
+    throw erro;
+  }
+
+  return {
+    blob: await resposta.blob(),
+    headers: resposta.headers
+  };
+};
+
 export const salvarSessaoSebo = async (usuario, perfil) => {
   const token = await usuario.getIdToken();
   localStorage.setItem('seboToken', token);

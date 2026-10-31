@@ -64,7 +64,8 @@ Antes de usar os novos endpoints no site publicado, publique/deploy as alteraç�
 - `index.html`: página inicial da área de parceiros.
 - `html/login.html`: gestores entram por e-mail/senha ou Google; colaboradores entram por login ou telefone e senha temporária. O botão **Funcionário** na página inicial abre o acesso dedicado da equipe.
 - `html/funcionarios.html`: área provisória protegida para subcontas, com validação da sessão e troca obrigatória da senha temporária no primeiro acesso; a página de trabalho da equipe será construída em seguida.
-- `html/cadastrar-livro.html`: formulário de cadastro de livro no acervo do sebo, incluindo gêneros múltiplos, idioma, condição, localização e quantidade em estoque; disponível para gestores e para colaboradores com a permissão `acervo.cadastrar`.
+- `html/cadastrar-livro.html`: formulário de cadastro de livro no acervo do sebo, incluindo gêneros múltiplos, idioma, condição, localização, quantidade em estoque e upload de até cinco imagens; disponível para gestores e para colaboradores com a permissão `acervo.cadastrar`.
+- A ação **Anunciar em massa** no painel do sebo e na área do funcionário abre o envio de uma planilha `.xlsx` com até 100 livros. Baixe o modelo no modal; após o processamento, o relatório `.xlsx` baixado informa cada resultado e os erros por linha. Imagens não são importadas pela planilha.
 - `html/cadastro.html`: cadastro, validação do CNPJ, preenchimento do endereço por CEP (ViaCEP), telefones, horário semanal e geolocalização opcional.
 - `html/subcontas.html`: gestão exclusiva do gestor para criar colaboradores, personalizar permissões, redefinir senhas, reativar e revogar acessos.
 - O horário exige pelo menos um dia aberto. Dias fechados são enviados como `null`; os horários são enviados como `abre` e `fecha`.

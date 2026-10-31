@@ -131,6 +131,12 @@
               <label for="bookQuantity">Quantidade em estoque *</label>
               <input id="bookQuantity" name="quantidadeEstoque" type="number" min="1" step="1" value="1" required>
             </div>
+            <div class="form-group">
+              <label for="bookImages">Imagens do livro</label>
+              <input id="bookImages" name="fotos" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="bookImagesHint">
+              <span id="bookImagesHint" class="field-hint">Adicione até 5 imagens JPEG, PNG ou WebP. Cada imagem pode ter até 4 MB.</span>
+              <div id="bookImagePreview" class="book-image-preview" aria-live="polite"></div>
+            </div>
             <p id="bookFeedback" class="feedback" role="status" aria-live="polite"></p>
             <button id="submitBook" class="button button-primary button-full" type="submit">Cadastrar livro</button>
           </form>

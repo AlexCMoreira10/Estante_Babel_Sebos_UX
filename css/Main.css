@@ -927,6 +927,48 @@ input:focus-visible {
   padding: 8px;
 }
 
+.form-group input[type="file"] {
+  min-height: auto;
+  padding: 10px;
+}
+
+.book-image-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 12px;
+}
+
+.book-image-item {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.book-image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-image-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: white;
+  background: rgba(25, 35, 29, 0.78);
+  font-size: 19px;
+  cursor: pointer;
+}
+
 .book-condition {
   display: grid;
   gap: 10px;
@@ -971,6 +1013,52 @@ input:focus-visible {
 
 .book-condition-options input {
   accent-color: var(--green);
+}
+
+.bulk-import-dialog {
+  width: min(520px, calc(100vw - 28px));
+  max-height: calc(100dvh - 28px);
+  padding: 0;
+  border: 1px solid rgba(49, 92, 80, 0.12);
+  border-radius: 22px;
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.bulk-import-dialog::backdrop {
+  background: rgba(25, 35, 29, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.bulk-import-content {
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 5vw, 34px);
+}
+
+.bulk-import-content h2 {
+  margin: 0;
+  color: var(--green);
+  font-size: 26px;
+}
+
+.bulk-import-content > p {
+  margin: 0;
+}
+
+.bulk-import-form {
+  gap: 15px;
+}
+
+.bulk-import-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.bulk-import-actions .button {
+  flex: 1;
 }
 
 .signed-in-panel h2 {

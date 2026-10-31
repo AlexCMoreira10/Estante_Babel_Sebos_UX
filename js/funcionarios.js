@@ -6,6 +6,7 @@ import {
   salvarSessaoSebo,
   signOut
 } from './firebase.js';
+import { adicionarAcaoAnunciosEmMassa } from './anuncio-em-massa.js';
 
 const logoutButton = document.getElementById('logoutButton');
 const greeting = document.getElementById('employeeGreeting');
@@ -133,6 +134,7 @@ const renderizarArea = (perfil, usuario) => {
     const cadastrarLivro = criar('a', 'button button-primary button-full', 'Cadastrar livros');
     cadastrarLivro.href = './cadastrar-livro.html';
     panel.append(cadastrarLivro);
+    adicionarAcaoAnunciosEmMassa(panel, () => usuario);
   }
   panel.append(criar('h3', 'access-heading', 'Acessos habilitados'));
   const lista = criar('ul', 'permission-list');
