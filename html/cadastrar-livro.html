@@ -64,30 +64,57 @@
             </div>
             <div class="form-group">
               <label for="bookYear">Ano de publicação</label>
-              <input id="bookYear" name="anoPublicacao" type="number" min="0" max="9999">
+              <input id="bookYear" name="anoPublicacao" type="number" min="1500">
             </div>
             <div class="form-group">
               <label for="bookGenres">Gêneros</label>
-              <input id="bookGenres" name="generos" type="text" placeholder="Ex.: Romance, Ficção">
-              <span class="field-hint">Separe os gêneros por vírgula.</span>
+              <select id="bookGenres" name="generos" multiple size="6" aria-describedby="genresHint">
+                <option value="Aventura">Aventura</option>
+                <option value="Biografia">Biografia</option>
+                <option value="Ciência">Ciência</option>
+                <option value="Conto">Conto</option>
+                <option value="Fantasia">Fantasia</option>
+                <option value="Ficção científica">Ficção científica</option>
+                <option value="História">História</option>
+                <option value="Infantil">Infantil</option>
+                <option value="Mistério">Mistério</option>
+                <option value="Poesia">Poesia</option>
+                <option value="Religião">Religião</option>
+                <option value="Romance">Romance</option>
+                <option value="Terror">Terror</option>
+              </select>
+              <span id="genresHint" class="field-hint">Selecione um ou mais gêneros. No computador, use Ctrl ou Command para marcar várias opções.</span>
             </div>
             <div class="form-group">
               <label for="bookLanguage">Idioma</label>
-              <input id="bookLanguage" name="idioma" type="text" maxlength="80" placeholder="Ex.: Português">
-            </div>
-            <div class="form-group">
-              <label for="bookCondition">Condição</label>
-              <select id="bookCondition" name="condicao">
-                <option value="novo">Novo</option>
-                <option value="bom" selected>Bom</option>
-                <option value="regular">Regular</option>
-                <option value="usado">Usado</option>
+              <select id="bookLanguage" name="idioma">
+                <option value="Português (Brasil)" selected>Português (Brasil)</option>
+                <option value="Inglês">Inglês</option>
+                <option value="Espanhol">Espanhol</option>
+                <option value="Francês">Francês</option>
+                <option value="Italiano">Italiano</option>
+                <option value="Alemão">Alemão</option>
+                <option value="Japonês">Japonês</option>
+                <option value="Coreano">Coreano</option>
+                <option value="Chinês (Mandarim)">Chinês (Mandarim)</option>
+                <option value="Árabe">Árabe</option>
+                <option value="Russo">Russo</option>
+                <option value="Outro">Outro</option>
               </select>
             </div>
+            <fieldset class="book-condition">
+              <legend>Condição</legend>
+              <div class="book-condition-options">
+                <label><input type="radio" name="condicao" value="novo"> Novo</label>
+                <label><input type="radio" name="condicao" value="bom" checked> Bom</label>
+                <label><input type="radio" name="condicao" value="regular"> Regular</label>
+                <label><input type="radio" name="condicao" value="usado"> Usado</label>
+              </div>
+            </fieldset>
             <div class="form-group">
               <label for="bookType">Anúncio *</label>
               <select id="bookType" name="tipo" required>
-                <option value="venda">Venda</option>
+                <option value="venda" selected>Venda</option>
                 <option value="troca">Troca</option>
                 <option value="doacao">Doação</option>
               </select>
@@ -99,6 +126,10 @@
             <div class="form-group">
               <label for="bookLocation">Localização do livro no sebo *</label>
               <input id="bookLocation" name="localizacao" type="text" maxlength="200" placeholder="Ex.: Loja Centro, estante A, prateleira 2" required>
+            </div>
+            <div class="form-group">
+              <label for="bookQuantity">Quantidade em estoque *</label>
+              <input id="bookQuantity" name="quantidadeEstoque" type="number" min="1" step="1" value="1" required>
             </div>
             <p id="bookFeedback" class="feedback" role="status" aria-live="polite"></p>
             <button id="submitBook" class="button button-primary button-full" type="submit">Cadastrar livro</button>

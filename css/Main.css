@@ -922,6 +922,57 @@ input:focus-visible {
   font: inherit;
 }
 
+.form-group select[multiple] {
+  min-height: 150px;
+  padding: 8px;
+}
+
+.book-condition {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.book-condition legend {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 680;
+}
+
+.book-condition-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.book-condition-options label {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  color: var(--text);
+  background: var(--surface-soft);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.book-condition-options label:has(input:checked) {
+  border-color: var(--green);
+  color: var(--green-dark);
+  background: var(--green-soft);
+}
+
+.book-condition-options input {
+  accent-color: var(--green);
+}
+
 .signed-in-panel h2 {
   margin: 0 0 9px;
   color: var(--green);

@@ -14,8 +14,10 @@ const typeSelect = document.getElementById('bookType');
 const priceGroup = document.getElementById('bookPriceGroup');
 const priceInput = document.getElementById('bookPrice');
 const backLink = document.getElementById('backLink');
+const yearInput = document.getElementById('bookYear');
 let usuarioAtual;
 submitButton.disabled = true;
+yearInput.max = String(new Date().getFullYear());
 
 const aguardarUsuario = () => new Promise((resolve) => {
   const cancelar = onAuthStateChanged(auth, (usuario) => {
@@ -94,15 +96,14 @@ form.addEventListener('submit', async (evento) => {
     descricao: document.getElementById('bookDescription').value.trim(),
     editora: document.getElementById('bookPublisher').value.trim(),
     anoPublicacao: ano ? Number(ano) : null,
-    generos: document.getElementById('bookGenres').value
-      .split(',')
-      .map((genero) => genero.trim())
-      .filter(Boolean),
-    idioma: document.getElementById('bookLanguage').value.trim(),
-    condicao: document.getElementById('bookCondition').value,
+    generos: [...document.getElementById('bookGenres').selectedOptions]
+      .map((genero) => genero.value),
+    idioma: document.getElementById('bookLanguage').value,
+    condicao: form.querySelector('input[name="condicao"]:checked').value,
     tipo: typeSelect.value,
     preco: typeSelect.value === 'venda' ? Number(priceInput.value) : null,
-    localizacao: document.getElementById('bookLocation').value.trim()
+    localizacao: document.getElementById('bookLocation').value.trim(),
+    quantidadeEstoque: Number(document.getElementById('bookQuantity').value)
   };
 
   submitButton.disabled = true;
@@ -116,6 +117,7 @@ form.addEventListener('submit', async (evento) => {
     mostrarFeedback('Livro cadastrado no acervo do sebo.', 'sucesso');
     form.reset();
     atualizarTipoAnuncio();
+    yearInput.max = String(new Date().getFullYear());
   } catch (erro) {
     console.error('Erro ao cadastrar livro do sebo:', erro);
     mostrarFeedback(erro.message || 'Não foi possível cadastrar o livro.', 'erro');
