@@ -1,4 +1,6 @@
-# Como buildar o app (passo a passo)
+# Como buildar o app
+
+O projeto já contém o `package.json` e a configuração do Capacitor em `capacitor.config.json`, com os arquivos web gerados em `dist/`. Por isso, não execute `npm init`, não instale o Capacitor novamente e não rode `npx cap init`: isso poderia substituir as configurações existentes (`appId`, nome e diretório web).
 
 1. Instale o Node.js e, na pasta do projeto, instale as dependências:
 
@@ -6,21 +8,31 @@
    npm install
    ```
 
-2. Gere a versão web do app. Os arquivos compilados ficarão em `dist/`:
-
-   ```sh
-   npm run build
-   ```
-
-3. Para preparar o app Android pela primeira vez, adicione a plataforma:
+2. Na primeira preparação do Android, gere os arquivos web e adicione a plataforma:
 
    ```sh
    npm run android:add
    ```
 
-   Nas próximas alterações, atualize os arquivos nativos com `npm run cap:sync`.
-4. Abra o projeto Android no Android Studio com `npx cap open android` e compile o APK/AAB pelo Android Studio. É necessário ter o Android Studio e o SDK configurados.
-5. Para iOS, em um Mac com Xcode, use `npm run ios:add` na primeira configuração; depois, `npm run cap:sync` e `npx cap open ios` para compilar pelo Xcode.
+   Esse script executa `npm run build` e, em seguida, `cap add android`. É necessário ter o Android Studio e o SDK configurados.
+
+3. Configure o Firebase nativo colocando `google-services.json` em `android/app/`. Depois, sincronize a plataforma:
+
+   ```sh
+   npm run cap:sync
+   ```
+
+   `cap:sync` executa o build web e sincroniza os arquivos e plugins do Capacitor; não é necessário rodar `cap copy` separadamente.
+
+4. Abra o projeto no Android Studio e compile o APK/AAB:
+
+   ```sh
+   npx cap open android
+   ```
+
+5. Nas próximas alterações do app, execute `npm run cap:sync` antes de abrir ou compilar novamente no Android Studio.
+
+Para iOS, em um Mac com Xcode, use `npm run ios:add` na primeira preparação. Coloque `GoogleService-Info.plist` no projeto iOS, execute `npm run cap:sync` e abra com `npx cap open ios`.
 
 # Estante Parceiros — Sebos
 
@@ -73,10 +85,9 @@ Configure o valor como `SUBACCOUNT_ENCRYPTION_KEY` no `.env` local e nas variáv
 As páginas usam Ionic Core como Web Components, mantendo os arquivos HTML/CSS/JavaScript legíveis e responsivos no navegador e em WebViews. O projeto inclui Capacitor e o plugin Firebase Authentication para o login Google nativo.
 
 1. Instale as dependências: `npm install`.
-2. Gere a cópia web em `dist/`: `npm run build`.
-3. Crie o projeto Android com `npm run android:add` ou o projeto iOS com `npm run ios:add`.
-4. Copie a configuração Firebase da plataforma (`google-services.json` para Android e `GoogleService-Info.plist` para iOS), configure os domínios/autenticação no Firebase e sincronize com `npm run cap:sync`.
-
+2. Crie o projeto Android com `npm run android:add` ou o projeto iOS com `npm run ios:add`; esses scripts geram os arquivos web antes de adicionar a plataforma.
+3. Copie a configuração Firebase da plataforma (`google-services.json` para Android e `GoogleService-Info.plist` para iOS), configure os domínios/autenticação no Firebase e sincronize com `npm run cap:sync`.
+npm run android:add
 O build web continua sendo HTML/CSS/JavaScript e pode ser hospedado estaticamente a partir da raiz do projeto. Para compilar os instaladores nativos, também é necessário ter o Android Studio/SDK ou Xcode instalado e configurado.
 
 O fluxo do aplicativo salva a sessão nos itens `sebo` e `seboToken` do `localStorage`, sem reutilizar as chaves do app de usuários. O endpoint e a estrutura das requisições estão documentados no [README do backend](../../Node/backend_v6/README.md) e no [API.md](./API.md).
