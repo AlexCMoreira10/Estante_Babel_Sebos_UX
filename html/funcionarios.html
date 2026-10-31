@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Área do funcionário | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <nav class="header-actions" aria-label="Acesso">
+          <button id="logoutButton" class="text-link" type="button" hidden>Sair</button>
+        </nav>
+      </header>
+
+      <main class="staff-layout">
+        <section class="staff-heading">
+          <p class="eyebrow">Acesso da equipe</p>
+          <h1 id="employeeGreeting">Área do funcionário</h1>
+          <p id="employeeSebo"></p>
+        </section>
+
+        <section id="employeePanel" class="auth-card signed-in-panel" aria-live="polite">
+          <p id="employeeFeedback" class="feedback" role="status" aria-live="polite">
+            Validando seu acesso...
+          </p>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/funcionarios.js"></script>
+</body>
+</html>

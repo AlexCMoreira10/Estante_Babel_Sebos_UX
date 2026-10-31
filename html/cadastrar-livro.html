@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Cadastrar livro | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <nav class="header-actions" aria-label="Navegação">
+          <a id="backLink" class="text-link" href="../index.html">
+            <ion-icon name="arrow-back-outline"></ion-icon> Voltar
+          </a>
+        </nav>
+      </header>
+
+      <main class="staff-layout">
+        <section class="staff-heading">
+          <p class="eyebrow">Acervo do sebo</p>
+          <h1>Cadastrar livro</h1>
+          <p>Adicione um livro ao acervo do estabelecimento.</p>
+        </section>
+
+        <section class="auth-card" aria-labelledby="bookFormTitle">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Novo livro</span>
+            <h2 id="bookFormTitle">Informações do livro</h2>
+            <p>Sebo: <strong id="bookstoreName">Carregando...</strong></p>
+          </div>
+          <form id="bookForm" class="form-stack">
+            <div class="form-group">
+              <label for="bookTitle">Título *</label>
+              <input id="bookTitle" name="titulo" type="text" maxlength="200" required>
+            </div>
+            <div class="form-group">
+              <label for="bookAuthor">Autor *</label>
+              <input id="bookAuthor" name="autor" type="text" maxlength="160" required>
+            </div>
+            <div class="form-group">
+              <label for="bookDescription">Descrição</label>
+              <textarea id="bookDescription" name="descricao" rows="4" maxlength="2000"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="bookPublisher">Editora</label>
+              <input id="bookPublisher" name="editora" type="text" maxlength="120">
+            </div>
+            <div class="form-group">
+              <label for="bookYear">Ano de publicação</label>
+              <input id="bookYear" name="anoPublicacao" type="number" min="0" max="9999">
+            </div>
+            <div class="form-group">
+              <label for="bookGenres">Gêneros</label>
+              <input id="bookGenres" name="generos" type="text" placeholder="Ex.: Romance, Ficção">
+              <span class="field-hint">Separe os gêneros por vírgula.</span>
+            </div>
+            <div class="form-group">
+              <label for="bookLanguage">Idioma</label>
+              <input id="bookLanguage" name="idioma" type="text" maxlength="80" placeholder="Ex.: Português">
+            </div>
+            <div class="form-group">
+              <label for="bookCondition">Condição</label>
+              <select id="bookCondition" name="condicao">
+                <option value="novo">Novo</option>
+                <option value="bom" selected>Bom</option>
+                <option value="regular">Regular</option>
+                <option value="usado">Usado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bookType">Anúncio *</label>
+              <select id="bookType" name="tipo" required>
+                <option value="venda">Venda</option>
+                <option value="troca">Troca</option>
+                <option value="doacao">Doação</option>
+              </select>
+            </div>
+            <div id="bookPriceGroup" class="form-group">
+              <label for="bookPrice">Preço (R$) *</label>
+              <input id="bookPrice" name="preco" type="number" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="bookLocation">Localização do livro no sebo *</label>
+              <input id="bookLocation" name="localizacao" type="text" maxlength="200" placeholder="Ex.: Loja Centro, estante A, prateleira 2" required>
+            </div>
+            <p id="bookFeedback" class="feedback" role="status" aria-live="polite"></p>
+            <button id="submitBook" class="button button-primary button-full" type="submit">Cadastrar livro</button>
+          </form>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/cadastrar-livro.js"></script>
+</body>
+</html>

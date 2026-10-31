@@ -18,6 +18,33 @@ const loginButton = document.getElementById('loginSubmit');
 const googleButton = document.getElementById('googleLogin');
 const resetButton = document.getElementById('forgotPassword');
 const feedback = document.getElementById('loginFeedback');
+const modoFuncionario = new URLSearchParams(window.location.search).get('tipo') === 'funcionario';
+
+if (modoFuncionario) {
+  document.title = 'Entrar como funcionário | Estante Parceiros';
+  document.getElementById('loginIntroEyebrow').textContent = 'Acesso da equipe';
+  document.getElementById('loginIntroTitle').textContent = 'Entre para continuar seu trabalho.';
+  document.getElementById('loginIntroDescription').textContent =
+    'Use o login ou telefone e a senha temporária fornecidos pelo gestor do sebo.';
+  document.getElementById('loginCardEyebrow').textContent = 'Área do funcionário';
+  document.getElementById('loginTitle').textContent = 'Acesso da equipe';
+  document.getElementById('loginDescription').textContent = 'Informe seus dados de acesso.';
+  document.getElementById('loginIdentifierLabel').textContent = 'Login ou telefone';
+  emailInput.placeholder = 'Digite seu login ou telefone';
+  document.getElementById('googleDivider').hidden = true;
+  googleButton.hidden = true;
+  resetButton.hidden = true;
+  const loginSwitch = document.getElementById('loginSwitch');
+  const inicioLink = document.createElement('a');
+  inicioLink.href = '../index.html';
+  inicioLink.textContent = 'Voltar ao início';
+  loginSwitch.replaceChildren(
+    document.createTextNode('Se esqueceu sua senha, solicite uma nova senha temporária ao gestor do sebo.'),
+    document.createElement('br'),
+    document.createElement('br'),
+    inicioLink
+  );
+}
 
 const mostrarFeedback = (mensagem, tipo = '') => {
   feedback.textContent = mensagem;
@@ -50,7 +77,7 @@ const entrarComoColaborador = async (identificador, senha) => {
     email: subconta.login
   };
   await salvarSessaoSebo(credencial.user, perfil);
-  window.location.replace('../index.html');
+  window.location.replace('./funcionarios.html');
 };
 
 const tratarErroLogin = async (erro) => {
@@ -77,7 +104,7 @@ loginForm.addEventListener('submit', async (evento) => {
   mostrarFeedback('Entrando na sua conta...');
   try {
     const identificador = emailInput.value.trim();
-    if (identificador.includes('@')) {
+    if (!modoFuncionario && identificador.includes('@')) {
       const resultado = await signInWithEmailAndPassword(
         auth,
         identificador,

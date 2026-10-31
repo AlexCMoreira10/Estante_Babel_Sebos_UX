@@ -138,6 +138,9 @@ const renderizarSessao = (usuario, perfil) => {
 
   const gerenciar = criar('a', 'button button-primary button-full', 'Gerenciar colaboradores');
   gerenciar.href = './html/subcontas.html';
+  const cadastrarLivro = criar('a', 'button button-secondary button-full', 'Cadastrar livros');
+  cadastrarLivro.href = './html/cadastrar-livro.html';
+  painel.append(cadastrarLivro);
   painel.append(gerenciar);
 };
 
