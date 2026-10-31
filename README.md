@@ -1,3 +1,27 @@
+# Como buildar o app (passo a passo)
+
+1. Instale o Node.js e, na pasta do projeto, instale as dependências:
+
+   ```sh
+   npm install
+   ```
+
+2. Gere a versão web do app. Os arquivos compilados ficarão em `dist/`:
+
+   ```sh
+   npm run build
+   ```
+
+3. Para preparar o app Android pela primeira vez, adicione a plataforma:
+
+   ```sh
+   npm run android:add
+   ```
+
+   Nas próximas alterações, atualize os arquivos nativos com `npm run cap:sync`.
+4. Abra o projeto Android no Android Studio com `npx cap open android` e compile o APK/AAB pelo Android Studio. É necessário ter o Android Studio e o SDK configurados.
+5. Para iOS, em um Mac com Xcode, use `npm run ios:add` na primeira configuração; depois, `npm run cap:sync` e `npx cap open ios` para compilar pelo Xcode.
+
 # Estante Parceiros — Sebos
 
 Frontend responsivo para cadastro e autenticação de sebos da Estante de Babel. A interface usa HTML, CSS, JavaScript e componentes Ionic Core; o Firebase Authentication cuida das contas e a API grava os perfis no Firestore.
