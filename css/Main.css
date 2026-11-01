@@ -1496,6 +1496,13 @@ input:focus-visible {
   margin-bottom: 12px;
 }
 
+.conversation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
 .conversation-heading h2,
 .chat-heading h2 {
   margin: 0;
@@ -1788,6 +1795,10 @@ input:focus-visible {
   .conversation-list {
     max-height: 220px;
     overflow-y: auto;
+  }
+
+  .conversation-heading {
+    align-items: flex-start;
   }
 
   .chat-panel,

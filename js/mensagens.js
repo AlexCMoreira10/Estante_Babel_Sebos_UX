@@ -11,6 +11,7 @@ const feedback = document.getElementById('messagesFeedback');
 const workspace = document.getElementById('messagesWorkspace');
 const conversationList = document.getElementById('conversationList');
 const reloadConversations = document.getElementById('reloadConversations');
+const deleteAllMessagesButton = document.getElementById('deleteAllMessages');
 const chatPlaceholder = document.getElementById('chatPlaceholder');
 const chatContent = document.getElementById('chatContent');
 const chatContact = document.getElementById('chatContact');
@@ -226,6 +227,37 @@ const apagarMensagem = async (mensagem, botao) => {
   }
 };
 
+const apagarTodasMensagens = async () => {
+  if (!window.confirm('Apagar todas as conversas e mensagens, recebidas e enviadas pelo sebo? Essa ação não pode ser desfeita.')) {
+    return;
+  }
+
+  deleteAllMessagesButton.disabled = true;
+  try {
+    const resultado = await requisicaoSebo('mensagens', {
+      ...(await tokenAtual()),
+      method: 'DELETE'
+    });
+    conversaSelecionada = null;
+    chatContent.hidden = true;
+    chatPlaceholder.hidden = false;
+    messageList.replaceChildren();
+    await carregarConversas();
+    mostrarFeedback(
+      feedback,
+      resultado.apagadas === 1
+        ? '1 mensagem foi apagada.'
+        : `${resultado.apagadas} mensagens foram apagadas.`,
+      'sucesso'
+    );
+  } catch (erro) {
+    console.error('Erro ao apagar todas as mensagens:', erro);
+    mostrarFeedback(feedback, erro.message || 'Não foi possível apagar as mensagens.', 'erro');
+  } finally {
+    deleteAllMessagesButton.disabled = false;
+  }
+};
+
 replyForm.addEventListener('submit', async (evento) => {
   evento.preventDefault();
   if (!conversaSelecionada || !replyForm.reportValidity()) return;
@@ -253,6 +285,7 @@ replyForm.addEventListener('submit', async (evento) => {
 });
 
 reloadConversations.addEventListener('click', carregarConversas);
+deleteAllMessagesButton.addEventListener('click', apagarTodasMensagens);
 logoutButton.addEventListener('click', async () => {
   logoutButton.disabled = true;
   try {

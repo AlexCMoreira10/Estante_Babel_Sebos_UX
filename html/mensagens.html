@@ -44,7 +44,10 @@
           <aside class="conversation-panel">
             <div class="conversation-heading">
               <h2>Conversas</h2>
-              <button id="reloadConversations" class="button button-secondary button-small" type="button">Atualizar</button>
+              <div class="conversation-actions">
+                <button id="deleteAllMessages" class="button button-danger button-small" type="button">Apagar todas</button>
+                <button id="reloadConversations" class="button button-secondary button-small" type="button">Atualizar</button>
+              </div>
             </div>
             <div id="conversationList" class="conversation-list" aria-label="Lista de conversas"></div>
           </aside>
