@@ -21,7 +21,8 @@ const nomesPermissoes = {
   'negociacoes.consultar': 'Consultar vendas e trocas',
   'negociacoes.gerenciar': 'Gerenciar vendas e trocas',
   'financeiro.consultar': 'Consultar financeiro',
-  'financeiro.relatorios': 'Acessar relatórios financeiros'
+  'financeiro.relatorios': 'Acessar relatórios financeiros',
+  'mensagens.gerenciar': 'Consultar e responder mensagens'
 };
 
 const criar = (tag, classe = '', texto = '') => {

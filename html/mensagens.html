@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Mensagens | Estante Parceiros</title>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <nav class="header-actions" aria-label="Navegação">
+          <a class="text-link" href="./funcionarios.html"><ion-icon name="arrow-back-outline"></ion-icon> Área do funcionário</a>
+          <button id="logoutButton" class="text-link" type="button" hidden>Sair</button>
+        </nav>
+      </header>
+
+      <main class="staff-layout">
+        <section class="staff-heading">
+          <p class="eyebrow">Atendimento do sebo</p>
+          <h1>Mensagens</h1>
+          <p>Leia as mensagens recebidas e responda aos leitores em nome do sebo.</p>
+        </section>
+
+        <p id="messagesFeedback" class="feedback" role="status" aria-live="polite">Validando seu acesso...</p>
+
+        <section id="messagesWorkspace" class="messages-workspace" hidden>
+          <aside class="conversation-panel">
+            <div class="conversation-heading">
+              <h2>Conversas</h2>
+              <button id="reloadConversations" class="button button-secondary button-small" type="button">Atualizar</button>
+            </div>
+            <div id="conversationList" class="conversation-list" aria-label="Lista de conversas"></div>
+          </aside>
+
+          <section class="chat-panel" aria-label="Conversa selecionada">
+            <div id="chatPlaceholder" class="chat-placeholder">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              <p>Selecione uma conversa para ver as mensagens.</p>
+            </div>
+            <div id="chatContent" class="chat-content" hidden>
+              <header class="chat-heading">
+                <div>
+                  <p class="eyebrow">Conversa com</p>
+                  <h2 id="chatContact"></h2>
+                </div>
+              </header>
+              <p id="chatFeedback" class="feedback" role="status" aria-live="polite"></p>
+              <div id="messageList" class="message-list" aria-live="polite"></div>
+              <form id="replyForm" class="reply-form">
+                <label class="sr-only" for="replyText">Sua resposta</label>
+                <textarea id="replyText" name="conteudo" rows="3" maxlength="2000" placeholder="Escreva sua resposta..." required></textarea>
+                <button id="sendReply" class="button button-primary" type="submit">Enviar resposta</button>
+              </form>
+            </div>
+          </section>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/mensagens.js"></script>
+</body>
+</html>

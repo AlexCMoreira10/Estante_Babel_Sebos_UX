@@ -63,16 +63,16 @@ Antes de usar os novos endpoints no site publicado, publique/deploy as alteraç�
 
 - `index.html`: página inicial da área de parceiros.
 - `html/login.html`: gestores entram por e-mail/senha ou Google; colaboradores entram por login ou telefone e senha temporária. O botão **Funcionário** na página inicial abre o acesso dedicado da equipe.
-- `html/funcionarios.html`: área provisória protegida para subcontas, com validação da sessão e troca obrigatória da senha temporária no primeiro acesso; a página de trabalho da equipe será construída em seguida.
+- `html/funcionarios.html`: área protegida para subcontas, com validação da sessão e troca obrigatória da senha temporária no primeiro acesso. Colaboradores com a permissão `mensagens.gerenciar` acessam a caixa de entrada compartilhada do sebo para responder, marcar como lida e apagar mensagens recebidas em `html/mensagens.html`.
 - No perfil autenticado do gestor, a seção **Livros cadastrados** mostra os anúncios do acervo do sebo com paginação e QR Codes individuais para rastreamento, que podem ser baixados como PNG. Colaboradores com a permissão `acervo.consultar` também podem consultar o acervo.
 - `html/cadastrar-livro.html`: formulário de cadastro de livro no acervo do sebo, incluindo gêneros múltiplos, idioma, condição, localização, quantidade em estoque e até cinco imagens combinando arquivos enviados (JPEG, PNG ou WebP de até 4 MB cada) com URLs HTTPS públicas; o backend associa ao livro a geolocalização cadastrada para a loja; disponível para gestores e para colaboradores com a permissão `acervo.cadastrar`.
 - A ação **Anunciar em massa** no painel do sebo e na área do funcionário abre o envio de uma planilha `.xlsx` com até 100 livros. Baixe o modelo no modal; após o processamento, o relatório `.xlsx` baixado informa cada resultado e os erros por linha. Imagens não são importadas pela planilha.
 - `html/cadastro.html`: cadastro, validação do CNPJ, preenchimento do endereço por CEP (ViaCEP), telefones, horário semanal e geolocalização opcional.
-- `html/subcontas.html`: gestão exclusiva do gestor para criar colaboradores, personalizar permissões, redefinir senhas, reativar e revogar acessos.
+- `html/subcontas.html`: gestão exclusiva do gestor para criar colaboradores, personalizar permissões, redefinir senhas, reativar e revogar acessos. Os tipos padrão incluem acesso a mensagens; contas personalizadas e subcontas já existentes precisam receber `mensagens.gerenciar` pelo gestor.
 - O horário exige pelo menos um dia aberto. Dias fechados são enviados como `null`; os horários são enviados como `abre` e `fecha`.
 - O CNPJ é validado no navegador para feedback e novamente no backend. A API é a validação definitiva.
 - Colaboradores recebem senha temporária e precisam trocá-la no primeiro login. A revogação bloqueia as rotas protegidas e mantém o cadastro inativo para histórico ou reativação.
-- A interface salva permissões de acervo, negociações e financeiro. As rotas atuais do app de usuários rejeitam tokens de colaboradores; as operações comerciais de acervo/vendas/financeiro para sebos ainda precisam ser implementadas e ligadas a essas permissões.
+- A interface salva permissões de acervo, negociações, financeiro e mensagens. As rotas de mensagens atendem subcontas autorizadas em nome do sebo; as demais rotas do app de usuários continuam rejeitando tokens de colaboradores.
 
 ## Preparar autenticação de colaboradores
 

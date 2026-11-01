@@ -23,7 +23,8 @@ const nomesPermissoes = {
   'negociacoes.consultar': 'Consultar vendas e trocas',
   'negociacoes.gerenciar': 'Gerenciar vendas e trocas',
   'financeiro.consultar': 'Consultar financeiro',
-  'financeiro.relatorios': 'Acessar relatórios financeiros'
+  'financeiro.relatorios': 'Acessar relatórios financeiros',
+  'mensagens.gerenciar': 'Consultar e responder mensagens'
 };
 
 const criar = (tag, classe = '', texto = '') => {
@@ -129,7 +130,7 @@ const renderizarArea = (perfil, usuario) => {
   panel.append(
     criar('p', 'eyebrow', 'Acesso confirmado'),
     criar('h2', '', 'Área do funcionário'),
-    criar('p', '', 'A página de trabalho da equipe está em construção. Seu acesso já está ativo.')
+    criar('p', '', 'Acesse as ferramentas liberadas pelo gestor do sebo.')
   );
   if ((perfil.permissoes || []).includes('acervo.cadastrar')) {
     const cadastrarLivro = criar('a', 'button button-primary button-full', 'Cadastrar livros');
@@ -139,6 +140,11 @@ const renderizarArea = (perfil, usuario) => {
   }
   if ((perfil.permissoes || []).includes('acervo.consultar')) {
     adicionarSecaoLivrosPerfil(panel, () => usuario);
+  }
+  if ((perfil.permissoes || []).includes('mensagens.gerenciar')) {
+    const mensagens = criar('a', 'button button-primary button-full', 'Mensagens');
+    mensagens.href = './mensagens.html';
+    panel.append(mensagens);
   }
   panel.append(criar('h3', 'access-heading', 'Acessos habilitados'));
   const lista = criar('ul', 'permission-list');

@@ -21,15 +21,18 @@ const permissionTemplates = {
     'acervo.consultar',
     'acervo.cadastrar',
     'acervo.editar',
-    'acervo.excluir'
+    'acervo.excluir',
+    'mensagens.gerenciar'
   ],
   operador_negociacoes: [
     'negociacoes.consultar',
-    'negociacoes.gerenciar'
+    'negociacoes.gerenciar',
+    'mensagens.gerenciar'
   ],
   gestor_financeiro: [
     'financeiro.consultar',
-    'financeiro.relatorios'
+    'financeiro.relatorios',
+    'mensagens.gerenciar'
   ],
   personalizado: []
 };
@@ -41,7 +44,8 @@ const permissionLabels = {
   'negociacoes.consultar': 'Consultar vendas e trocas',
   'negociacoes.gerenciar': 'Gerenciar vendas e trocas',
   'financeiro.consultar': 'Consultar financeiro',
-  'financeiro.relatorios': 'Acessar relatórios financeiros'
+  'financeiro.relatorios': 'Acessar relatórios financeiros',
+  'mensagens.gerenciar': 'Consultar e responder mensagens'
 };
 const typeLabels = {
   cadastrador_acervo: 'Cadastrador de acervo',
