@@ -81,8 +81,8 @@
         <form id="deleteAllMessagesForm" class="form-stack">
           <div class="auth-card-heading">
             <span class="eyebrow">Confirmar exclusão</span>
-            <h2>Apagar todas as conversas?</h2>
-            <p>O histórico inteiro, incluindo mensagens enviadas e recebidas, será apagado permanentemente.</p>
+            <h2>Apagar todas as conversas para você?</h2>
+            <p>As conversas desaparecerão da sua caixa de entrada. A outra pessoa continuará vendo as mensagens normalmente.</p>
           </div>
           <div class="form-group">
             <label for="deleteAllPassword">Senha do funcionário</label>
@@ -92,6 +92,21 @@
           <div class="staff-form-actions">
             <button id="confirmDeleteAllMessages" class="button button-danger" type="submit">Confirmar e apagar</button>
             <button id="cancelDeleteAllMessages" class="button button-secondary" type="button">Cancelar</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="deleteMessageDialog" class="password-dialog">
+        <form id="deleteMessageForm" class="form-stack">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Confirmar exclusão</span>
+            <h2 id="deleteMessageTitle">Apagar mensagem?</h2>
+            <p id="deleteMessageDescription"></p>
+          </div>
+          <p id="deleteMessageFeedback" class="feedback" role="status" aria-live="polite"></p>
+          <div class="staff-form-actions">
+            <button id="confirmDeleteMessage" class="button button-danger" type="submit">Apagar mensagem</button>
+            <button id="cancelDeleteMessage" class="button button-secondary" type="button">Cancelar</button>
           </div>
         </form>
       </dialog>

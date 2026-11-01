@@ -18,6 +18,13 @@ const deleteAllPassword = document.getElementById('deleteAllPassword');
 const deleteAllFeedback = document.getElementById('deleteAllFeedback');
 const confirmDeleteAllMessages = document.getElementById('confirmDeleteAllMessages');
 const cancelDeleteAllMessages = document.getElementById('cancelDeleteAllMessages');
+const deleteMessageDialog = document.getElementById('deleteMessageDialog');
+const deleteMessageForm = document.getElementById('deleteMessageForm');
+const deleteMessageTitle = document.getElementById('deleteMessageTitle');
+const deleteMessageDescription = document.getElementById('deleteMessageDescription');
+const deleteMessageFeedback = document.getElementById('deleteMessageFeedback');
+const confirmDeleteMessage = document.getElementById('confirmDeleteMessage');
+const cancelDeleteMessage = document.getElementById('cancelDeleteMessage');
 const chatPlaceholder = document.getElementById('chatPlaceholder');
 const chatContent = document.getElementById('chatContent');
 const chatContact = document.getElementById('chatContact');
@@ -31,6 +38,7 @@ let usuario = null;
 let perfil = null;
 let conversas = [];
 let conversaSelecionada = null;
+let mensagemPendenteExclusao = null;
 
 const criar = (tag, classe = '', texto = '') => {
   const elemento = document.createElement(tag);
@@ -147,8 +155,8 @@ const renderizarMensagem = (mensagem) => {
   if (data) cabecalho.append(criar('time', '', data));
   cartao.append(cabecalho, criar('p', 'chat-message-content', mensagem.conteudo || ''));
 
+  const acoes = criar('div', 'chat-message-actions');
   if (recebida) {
-    const acoes = criar('div', 'chat-message-actions');
     if (!mensagem.lida) {
       const marcarLida = criar('button', 'button button-secondary button-small', 'Marcar como lida');
       marcarLida.type = 'button';
@@ -157,12 +165,13 @@ const renderizarMensagem = (mensagem) => {
     } else {
       acoes.append(criar('span', 'read-status', 'Lida'));
     }
-    const apagar = criar('button', 'button button-danger button-small', 'Apagar');
-    apagar.type = 'button';
-    apagar.addEventListener('click', () => apagarMensagem(mensagem, apagar));
-    acoes.append(apagar);
-    cartao.append(acoes);
   }
+
+  const apagar = criar('button', 'button button-danger button-small', 'Apagar');
+  apagar.type = 'button';
+  apagar.addEventListener('click', () => solicitarExclusaoMensagem(mensagem));
+  acoes.append(apagar);
+  cartao.append(acoes);
 
   return cartao;
 };
@@ -216,20 +225,53 @@ const marcarMensagemLida = async (mensagem, botao) => {
   }
 };
 
-const apagarMensagem = async (mensagem, botao) => {
-  if (!window.confirm('Apagar esta mensagem recebida? Essa ação não pode ser desfeita.')) return;
-  botao.disabled = true;
+const solicitarExclusaoMensagem = (mensagem) => {
+  const enviadaPorMim = mensagem.id_remetente === perfil.seboId;
+  mensagemPendenteExclusao = mensagem;
+  deleteMessageTitle.textContent = enviadaPorMim
+    ? 'Apagar mensagem para todos?'
+    : 'Apagar mensagem da sua caixa de entrada?';
+  deleteMessageDescription.textContent = enviadaPorMim
+    ? 'Esta mensagem será removida para você e para a outra pessoa.'
+    : 'A mensagem será removida apenas da sua caixa de entrada. A outra pessoa continuará vendo-a normalmente.';
+  mostrarFeedback(deleteMessageFeedback, '');
+  confirmDeleteMessage.disabled = false;
+  deleteMessageDialog.showModal();
+};
+
+const apagarMensagem = async () => {
+  const mensagem = mensagemPendenteExclusao;
+  if (!mensagem) return;
+
+  const enviadaPorMim = mensagem.id_remetente === perfil.seboId;
+  confirmDeleteMessage.disabled = true;
+  mostrarFeedback(deleteMessageFeedback, 'Apagando mensagem...');
   try {
-    await requisicaoSebo(`mensagens/${encodeURIComponent(mensagem.id)}`, {
+    const resultado = await requisicaoSebo(`mensagens/${encodeURIComponent(mensagem.id)}`, {
       ...(await tokenAtual()),
       method: 'DELETE'
     });
+    if (enviadaPorMim && resultado.apagadaParaTodos !== true) {
+      throw new Error(
+        'O servidor não confirmou a exclusão para os dois participantes. Atualize o backend e tente novamente.'
+      );
+    }
+
+    deleteMessageDialog.close();
+    mensagemPendenteExclusao = null;
     await carregarConversas();
     await carregarMensagens();
+    mostrarFeedback(
+      feedback,
+      resultado.apagadaParaTodos
+        ? 'Sua mensagem foi apagada para os dois participantes.'
+        : 'A mensagem foi apagada somente da sua caixa de entrada.',
+      'sucesso'
+    );
   } catch (erro) {
     console.error('Erro ao apagar mensagem:', erro);
-    mostrarFeedback(chatFeedback, erro.message || 'Não foi possível apagar a mensagem.', 'erro');
-    botao.disabled = false;
+    mostrarFeedback(deleteMessageFeedback, erro.message || 'Não foi possível apagar a mensagem.', 'erro');
+    confirmDeleteMessage.disabled = false;
   }
 };
 
@@ -249,9 +291,9 @@ const apagarTodasMensagens = async () => {
     await carregarConversas();
     mostrarFeedback(
       feedback,
-      resultado.apagadas === 1
-        ? '1 mensagem foi apagada.'
-        : `${resultado.apagadas} mensagens foram apagadas.`,
+      resultado.ocultadas === 1
+        ? '1 mensagem foi apagada da sua caixa de entrada.'
+        : `${resultado.ocultadas} mensagens foram apagadas da sua caixa de entrada.`,
       'sucesso'
     );
   } catch (erro) {
@@ -308,6 +350,16 @@ cancelDeleteAllMessages.addEventListener('click', () => deleteAllMessagesDialog.
 deleteAllMessagesDialog.addEventListener('close', () => {
   deleteAllMessagesForm.reset();
   mostrarFeedback(deleteAllFeedback, '');
+});
+deleteMessageForm.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  await apagarMensagem();
+});
+cancelDeleteMessage.addEventListener('click', () => deleteMessageDialog.close());
+deleteMessageDialog.addEventListener('close', () => {
+  mensagemPendenteExclusao = null;
+  mostrarFeedback(deleteMessageFeedback, '');
+  confirmDeleteMessage.disabled = false;
 });
 logoutButton.addEventListener('click', async () => {
   logoutButton.disabled = true;
