@@ -66,6 +66,20 @@ const renderizarLivro = (livro) => {
   }
   if (detalhes.length) informacoes.append(criar('p', 'profile-book-meta', detalhes.join(' · ')));
   cartao.append(informacoes);
+
+  if (livro.qrCode) {
+    const areaQr = criar('div', 'profile-book-qr');
+    const imagemQr = document.createElement('img');
+    imagemQr.src = livro.qrCode;
+    imagemQr.alt = `QR Code para rastrear ${livro.titulo || 'este livro'}`;
+    imagemQr.loading = 'lazy';
+    const baixar = criar('a', 'button button-secondary button-small', 'Baixar QR Code');
+    baixar.href = livro.qrCode;
+    baixar.download = `qrcode-livro-${livro.id}.png`;
+    areaQr.append(imagemQr, baixar);
+    cartao.append(areaQr);
+  }
+
   return cartao;
 };
 
