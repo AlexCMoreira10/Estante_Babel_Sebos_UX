@@ -12,6 +12,12 @@ const workspace = document.getElementById('messagesWorkspace');
 const conversationList = document.getElementById('conversationList');
 const reloadConversations = document.getElementById('reloadConversations');
 const deleteAllMessagesButton = document.getElementById('deleteAllMessages');
+const deleteAllMessagesDialog = document.getElementById('deleteAllMessagesDialog');
+const deleteAllMessagesForm = document.getElementById('deleteAllMessagesForm');
+const deleteAllPassword = document.getElementById('deleteAllPassword');
+const deleteAllFeedback = document.getElementById('deleteAllFeedback');
+const confirmDeleteAllMessages = document.getElementById('confirmDeleteAllMessages');
+const cancelDeleteAllMessages = document.getElementById('cancelDeleteAllMessages');
 const chatPlaceholder = document.getElementById('chatPlaceholder');
 const chatContent = document.getElementById('chatContent');
 const chatContact = document.getElementById('chatContact');
@@ -228,16 +234,14 @@ const apagarMensagem = async (mensagem, botao) => {
 };
 
 const apagarTodasMensagens = async () => {
-  if (!window.confirm('Apagar todas as conversas e mensagens, recebidas e enviadas pelo sebo? Essa ação não pode ser desfeita.')) {
-    return;
-  }
-
-  deleteAllMessagesButton.disabled = true;
+  confirmDeleteAllMessages.disabled = true;
   try {
     const resultado = await requisicaoSebo('mensagens', {
       ...(await tokenAtual()),
-      method: 'DELETE'
+      method: 'DELETE',
+      body: JSON.stringify({ senha: deleteAllPassword.value })
     });
+    deleteAllMessagesDialog.close();
     conversaSelecionada = null;
     chatContent.hidden = true;
     chatPlaceholder.hidden = false;
@@ -252,9 +256,13 @@ const apagarTodasMensagens = async () => {
     );
   } catch (erro) {
     console.error('Erro ao apagar todas as mensagens:', erro);
-    mostrarFeedback(feedback, erro.message || 'Não foi possível apagar as mensagens.', 'erro');
+    mostrarFeedback(
+      deleteAllFeedback,
+      erro.message || 'Não foi possível confirmar a senha e apagar as conversas.',
+      'erro'
+    );
   } finally {
-    deleteAllMessagesButton.disabled = false;
+    confirmDeleteAllMessages.disabled = false;
   }
 };
 
@@ -285,7 +293,22 @@ replyForm.addEventListener('submit', async (evento) => {
 });
 
 reloadConversations.addEventListener('click', carregarConversas);
-deleteAllMessagesButton.addEventListener('click', apagarTodasMensagens);
+deleteAllMessagesButton.addEventListener('click', () => {
+  deleteAllMessagesForm.reset();
+  mostrarFeedback(deleteAllFeedback, '');
+  deleteAllMessagesDialog.showModal();
+  deleteAllPassword.focus();
+});
+deleteAllMessagesForm.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  if (!deleteAllMessagesForm.reportValidity()) return;
+  await apagarTodasMensagens();
+});
+cancelDeleteAllMessages.addEventListener('click', () => deleteAllMessagesDialog.close());
+deleteAllMessagesDialog.addEventListener('close', () => {
+  deleteAllMessagesForm.reset();
+  mostrarFeedback(deleteAllFeedback, '');
+});
 logoutButton.addEventListener('click', async () => {
   logoutButton.disabled = true;
   try {

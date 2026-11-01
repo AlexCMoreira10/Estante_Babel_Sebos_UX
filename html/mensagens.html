@@ -76,6 +76,25 @@
         </section>
       </main>
       <footer class="site-footer">Estante Parceiros © 2026</footer>
+
+      <dialog id="deleteAllMessagesDialog" class="password-dialog">
+        <form id="deleteAllMessagesForm" class="form-stack">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Confirmar exclusão</span>
+            <h2>Apagar todas as conversas?</h2>
+            <p>O histórico inteiro, incluindo mensagens enviadas e recebidas, será apagado permanentemente.</p>
+          </div>
+          <div class="form-group">
+            <label for="deleteAllPassword">Senha do funcionário</label>
+            <input id="deleteAllPassword" type="password" autocomplete="current-password" maxlength="128" required>
+          </div>
+          <p id="deleteAllFeedback" class="feedback" role="status" aria-live="polite"></p>
+          <div class="staff-form-actions">
+            <button id="confirmDeleteAllMessages" class="button button-danger" type="submit">Confirmar e apagar</button>
+            <button id="cancelDeleteAllMessages" class="button button-secondary" type="button">Cancelar</button>
+          </div>
+        </form>
+      </dialog>
     </ion-content>
   </ion-app>
   <script type="module" src="../js/mensagens.js"></script>
