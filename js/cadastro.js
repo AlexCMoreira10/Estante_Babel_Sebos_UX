@@ -23,8 +23,6 @@ const googleAccountNote = document.getElementById('googleAccountNote');
 const cancelGoogleSignup = document.getElementById('cancelGoogleSignup');
 const googleSignup = document.getElementById('googleSignup');
 const lookupCepButton = document.getElementById('lookupCep');
-const locationButton = document.getElementById('useLocation');
-const locationFeedback = document.getElementById('locationFeedback');
 let usuarioGoogle = null;
 let cepConsultado = '';
 
@@ -96,27 +94,6 @@ const obterHorario = () => {
   return horario;
 };
 
-const obterGeocode = () => {
-  const longitudeInput = document.getElementById('longitude');
-  const latitudeInput = document.getElementById('latitude');
-  const longitudeVazia = !longitudeInput.value.trim();
-  const latitudeVazia = !latitudeInput.value.trim();
-  if (longitudeVazia && latitudeVazia) return undefined;
-  if (longitudeVazia || latitudeVazia) {
-    throw new Error('Informe longitude e latitude juntas ou deixe os dois campos em branco.');
-  }
-
-  const longitude = longitudeInput.valueAsNumber;
-  const latitude = latitudeInput.valueAsNumber;
-  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
-    throw new Error('A longitude deve estar entre -180 e 180 graus.');
-  }
-  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
-    throw new Error('A latitude deve estar entre -90 e 90 graus.');
-  }
-  return { type: 'Point', coordinates: [longitude, latitude] };
-};
-
 const construirCadastro = () => {
   const cnpjValido = validarCnpj(cnpjInput.value);
   cnpjInput.setCustomValidity(cnpjValido ? '' : 'Informe um CNPJ válido.');
@@ -155,8 +132,6 @@ const construirCadastro = () => {
     endereco,
     horario_funcionamento: obterHorario()
   };
-  const geocode = obterGeocode();
-  if (geocode) dados.geocode = geocode;
   return dados;
 };
 
@@ -225,47 +200,6 @@ const consultarCep = async () => {
   } finally {
     lookupCepButton.disabled = false;
   }
-};
-
-const obterMensagemLocalizacao = (erro) => {
-  if (erro.code === 1) return 'Permissão negada. Autorize a localização nas configurações do navegador ou dispositivo.';
-  if (erro.code === 2) return 'A localização não está disponível. Confira o sinal/GPS e tente novamente.';
-  if (erro.code === 3) return 'A localização demorou demais para ser obtida. Tente novamente.';
-  return 'Não foi possível obter a localização. Você pode informar as coordenadas manualmente.';
-};
-
-const usarLocalizacao = () => {
-  if (!window.isSecureContext) {
-    mostrarStatusCampo(locationFeedback, 'A localização automática exige HTTPS (ou localhost).', 'erro');
-    return;
-  }
-  if (!navigator.geolocation) {
-    mostrarStatusCampo(locationFeedback, 'Este navegador não oferece suporte à localização.', 'erro');
-    return;
-  }
-
-  locationButton.disabled = true;
-  locationButton.textContent = 'Obtendo localização...';
-  mostrarStatusCampo(locationFeedback, 'Aguardando autorização e posição do dispositivo...');
-  navigator.geolocation.getCurrentPosition(
-    ({ coords }) => {
-      document.getElementById('longitude').value = String(coords.longitude);
-      document.getElementById('latitude').value = String(coords.latitude);
-      mostrarStatusCampo(locationFeedback, 'Coordenadas preenchidas. Você ainda pode editá-las.', 'sucesso');
-      finalizarLocalizacao();
-    },
-    (erro) => {
-      console.warn('Não foi possível obter a localização do sebo:', erro);
-      mostrarStatusCampo(locationFeedback, obterMensagemLocalizacao(erro), 'erro');
-      finalizarLocalizacao();
-    },
-    { enableHighAccuracy: false, maximumAge: 60000, timeout: 15000 }
-  );
-};
-
-const finalizarLocalizacao = () => {
-  locationButton.disabled = false;
-  locationButton.innerHTML = '<ion-icon name="locate-outline"></ion-icon> Usar localização atual';
 };
 
 const ativarDia = (checkbox) => {
@@ -345,7 +279,6 @@ form.querySelectorAll('[data-day]').forEach((checkbox) => {
 });
 
 confirmarSenhaInput.addEventListener('input', () => confirmarSenhaInput.setCustomValidity(''));
-locationButton.addEventListener('click', usarLocalizacao);
 googleSignup.addEventListener('click', async () => {
   googleSignup.disabled = true;
   mostrarFeedback('Conectando à sua conta Google...');
@@ -402,7 +335,7 @@ form.addEventListener('submit', async (evento) => {
     console.error('Erro ao cadastrar sebo:', erro);
     const mensagem = erro.status === 409
       ? erro.message
-      : erro.status === 400
+      : [400, 422, 502].includes(erro.status)
         ? erro.message
         : mensagemErroFirebase(erro);
     mostrarFeedback(mensagem, 'erro');

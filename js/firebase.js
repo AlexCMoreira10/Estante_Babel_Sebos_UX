@@ -1,45 +1,114 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import {
-  createUserWithEmailAndPassword,
+  createUserWithEmailAndPassword as createUserWithEmailAndPasswordSdk,
+  browserSessionPersistence,
+  connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
-  sendPasswordResetEmail,
+  sendPasswordResetEmail as sendPasswordResetEmailSdk,
+  setPersistence,
   signInWithCredential,
-  signInWithCustomToken,
-  signInWithEmailAndPassword,
+  signInWithCustomToken as signInWithCustomTokenSdk,
+  signInWithEmailAndPassword as signInWithEmailAndPasswordSdk,
   signInWithPopup,
   signOut
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { Capacitor } from '@capacitor/core';
+import {
+  AUTH_EMULATOR_URL,
+  FIREBASE_TEST_PROJECT_ID,
+  API_TEST_BASE,
+  criarConfiguracaoFirebaseTeste,
+  obterUrlsApi,
+  resolverAmbiente,
+  validarTokenProjetoTeste,
+  verificarServicosLocaisTeste
+} from './environment.js';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyA1GzaVBqE6BQ8QALyv6oD2uqFlUuk0S54',
-  authDomain: 'babel-5dcbd.firebaseapp.com',
-  projectId: 'babel-5dcbd',
-  storageBucket: 'babel-5dcbd.firebasestorage.app',
-  messagingSenderId: '537037438052',
-  appId: '1:537037438052:web:7ae0839725eaf0bbb73371'
-};
-
-const app = initializeApp(firebaseConfig);
+const ambiente = resolverAmbiente({
+  hostname: window.location.hostname,
+  search: window.location.search,
+  storage: window.sessionStorage
+});
+const sessaoStorage = ambiente.testMode ? window.sessionStorage : window.localStorage;
+const chaveTokenSessao = ambiente.testMode ? ambiente.sessionTokenKey : 'seboToken';
+const chavePerfilSessao = ambiente.testMode ? ambiente.sessionProfileKey : 'sebo';
+const API_LOCAL = 'http://localhost:3000/api';
+const isLocalWeb = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_REMOTE = ambiente.testMode ? null : 'https://babel-be-lovat.vercel.app/api';
+const firebaseConfig = ambiente.testMode
+  ? criarConfiguracaoFirebaseTeste()
+  : {
+      apiKey: 'AIzaSyA1GzaVBqE6BQ8QALyv6oD2uqFlUuk0S54',
+      authDomain: 'babel-5dcbd.firebaseapp.com',
+      projectId: 'babel-5dcbd',
+      storageBucket: 'babel-5dcbd.firebasestorage.app',
+      messagingSenderId: '537037438052',
+      appId: '1:537037438052:web:7ae0839725eaf0bbb73371'
+    };
+const app = initializeApp(
+  firebaseConfig,
+  ambiente.testMode ? ambiente.authAppName : undefined
+);
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-const API_LOCAL = 'http://localhost:3000/api';
-const API_REMOTE = 'https://babel-be-lovat.vercel.app/api';
-const isLocalWeb = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-export const API_BASE = isLocalWeb ? API_LOCAL : API_REMOTE;
+if (ambiente.testMode) {
+  connectAuthEmulator(auth, AUTH_EMULATOR_URL, { disableWarnings: true });
+  await setPersistence(auth, browserSessionPersistence);
+}
+
+export const TEST_MODE = ambiente.testMode;
+export const API_BASE = ambiente.testMode
+  ? API_TEST_BASE
+  : (isLocalWeb ? API_LOCAL : API_REMOTE);
+let testServicesReady = false;
+
+const garantirServicosTesteDisponiveis = async () => {
+  if (!ambiente.testMode || testServicesReady) return;
+  await verificarServicosLocaisTeste();
+  testServicesReady = true;
+};
+
+const validarCabecalhoTeste = headers => {
+  if (!ambiente.testMode) return;
+  const autorizacao = headers.get('Authorization');
+  if (!autorizacao) return;
+  if (!autorizacao.startsWith('Bearer ')) {
+    throw new Error('O modo de teste aceita somente Bearer tokens do Auth Emulator.');
+  }
+  validarTokenProjetoTeste(autorizacao.slice(7));
+};
 
 export {
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
   onAuthStateChanged,
-  signInWithCustomToken,
-  signInWithEmailAndPassword,
   signOut
 };
 
+export const createUserWithEmailAndPassword = async (...args) => {
+  await garantirServicosTesteDisponiveis();
+  return createUserWithEmailAndPasswordSdk(...args);
+};
+
+export const sendPasswordResetEmail = async (...args) => {
+  await garantirServicosTesteDisponiveis();
+  return sendPasswordResetEmailSdk(...args);
+};
+
+export const signInWithCustomToken = async (...args) => {
+  await garantirServicosTesteDisponiveis();
+  return signInWithCustomTokenSdk(...args);
+};
+
+export const signInWithEmailAndPassword = async (...args) => {
+  await garantirServicosTesteDisponiveis();
+  return signInWithEmailAndPasswordSdk(...args);
+};
+
 export const entrarComGoogle = async () => {
+  if (ambiente.testMode) {
+    throw new Error('O modo de teste local aceita somente contas fictícias do Auth Emulator.');
+  }
   if (Capacitor.getPlatform() === 'web') {
     return (await signInWithPopup(auth, googleProvider)).user;
   }
@@ -58,17 +127,28 @@ export const entrarComGoogle = async () => {
 };
 
 export const requisicaoSebo = async (caminho, { token, ...opcoes } = {}) => {
+  await garantirServicosTesteDisponiveis();
   const headers = new Headers(opcoes.headers || {});
   if (token) headers.set('Authorization', `Bearer ${token}`);
+  validarCabecalhoTeste(headers);
   if (opcoes.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const urls = API_BASE === API_LOCAL ? [API_LOCAL, API_REMOTE] : [API_REMOTE];
+  const urls = obterUrlsApi({
+    testMode: ambiente.testMode,
+    apiBase: API_BASE,
+    apiLocal: API_LOCAL,
+    apiRemote: API_REMOTE
+  });
   let resposta;
   for (let indice = 0; indice < urls.length; indice += 1) {
     try {
-      resposta = await fetch(`${urls[indice]}/${caminho}`, { ...opcoes, headers });
+      resposta = await fetch(`${urls[indice]}/${caminho}`, {
+        ...opcoes,
+        ...(ambiente.testMode ? { credentials: 'omit', redirect: 'error' } : {}),
+        headers
+      });
       break;
     } catch (erro) {
       if (indice === urls.length - 1) throw erro;
@@ -96,14 +176,25 @@ export const requisicaoSebo = async (caminho, { token, ...opcoes } = {}) => {
 };
 
 export const requisicaoSeboArquivo = async (caminho, { token, ...opcoes } = {}) => {
+  await garantirServicosTesteDisponiveis();
   const headers = new Headers(opcoes.headers || {});
   if (token) headers.set('Authorization', 'Bearer ' + token);
 
-  const urls = API_BASE === API_LOCAL ? [API_LOCAL, API_REMOTE] : [API_REMOTE];
+  validarCabecalhoTeste(headers);
+  const urls = obterUrlsApi({
+    testMode: ambiente.testMode,
+    apiBase: API_BASE,
+    apiLocal: API_LOCAL,
+    apiRemote: API_REMOTE
+  });
   let resposta;
   for (let indice = 0; indice < urls.length; indice += 1) {
     try {
-      resposta = await fetch(`${urls[indice]}/${caminho}`, { ...opcoes, headers });
+      resposta = await fetch(`${urls[indice]}/${caminho}`, {
+        ...opcoes,
+        ...(ambiente.testMode ? { credentials: 'omit', redirect: 'error' } : {}),
+        headers
+      });
       break;
     } catch (erro) {
       if (indice === urls.length - 1) throw erro;
@@ -134,8 +225,9 @@ export const requisicaoSeboArquivo = async (caminho, { token, ...opcoes } = {}) 
 
 export const salvarSessaoSebo = async (usuario, perfil) => {
   const token = await usuario.getIdToken();
-  localStorage.setItem('seboToken', token);
-  localStorage.setItem('sebo', JSON.stringify({
+  if (ambiente.testMode) validarTokenProjetoTeste(token);
+  sessaoStorage.setItem(chaveTokenSessao, token);
+  sessaoStorage.setItem(chavePerfilSessao, JSON.stringify({
     uid: usuario.uid,
     nome: perfil.nome || usuario.displayName || usuario.email,
     email: perfil.email || perfil.login || usuario.email || '',
@@ -153,8 +245,8 @@ export const salvarSessaoSebo = async (usuario, perfil) => {
 };
 
 export const limparSessaoSebo = () => {
-  localStorage.removeItem('seboToken');
-  localStorage.removeItem('sebo');
+  sessaoStorage.removeItem(chaveTokenSessao);
+  sessaoStorage.removeItem(chavePerfilSessao);
 };
 
 export const mensagemErroFirebase = (erro) => {

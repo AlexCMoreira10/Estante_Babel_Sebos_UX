@@ -141,9 +141,11 @@ const renderizarSessao = (usuario, perfil) => {
 
   const gerenciar = criar('a', 'button button-primary button-full', 'Gerenciar colaboradores');
   gerenciar.href = './html/subcontas.html';
+  const editarSebo = criar('a', 'button button-secondary button-full', 'Editar dados do sebo');
+  editarSebo.href = './html/editar-sebo.html';
   const cadastrarLivro = criar('a', 'button button-secondary button-full', 'Cadastrar livros');
   cadastrarLivro.href = './html/cadastrar-livro.html';
-  painel.append(cadastrarLivro);
+  painel.append(editarSebo, cadastrarLivro);
   adicionarSecaoLivrosPerfil(painel, () => usuario);
   adicionarAcaoAnunciosEmMassa(painel, () => usuario);
   painel.append(gerenciar);

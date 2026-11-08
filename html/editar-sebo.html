@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Dados do sebo | Estante Parceiros</title>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="../css/Main.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body>
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <a class="text-link" href="../index.html"><ion-icon name="arrow-back-outline"></ion-icon> Painel do sebo</a>
+      </header>
+
+      <main class="register-layout">
+        <section class="register-intro">
+          <p class="eyebrow">Perfil do estabelecimento</p>
+          <h1>Atualize os dados do sebo.</h1>
+          <p>Somente o gestor pode editar este cadastro. A localização comercial é calculada pelo endereço informado.</p>
+        </section>
+
+        <section class="auth-card register-card" aria-labelledby="editSeboTitle">
+          <div class="auth-card-heading">
+            <span class="eyebrow">Configurações do parceiro</span>
+            <h2 id="editSeboTitle">Dados do estabelecimento</h2>
+            <p>O CNPJ e os identificadores da conta não podem ser alterados por esta tela.</p>
+          </div>
+
+          <p id="locationStatus" class="feedback" role="status" aria-live="polite"></p>
+          <button id="retryLocation" class="button button-secondary button-full" type="button" hidden>
+            Tentar sincronizar localização novamente
+          </button>
+
+          <form id="seboForm" class="form-stack">
+            <fieldset class="form-section">
+              <legend><span class="section-number">1</span> Dados do estabelecimento</legend>
+              <div class="form-grid">
+                <div class="form-group span-2">
+                  <label for="seboName">Nome do sebo *</label>
+                  <input id="seboName" type="text" maxlength="120" required>
+                </div>
+                <div class="form-group span-2">
+                  <label>Telefones de contato *</label>
+                  <div id="phonesList" class="phone-list"></div>
+                  <button id="addPhone" class="text-link inline-action" type="button">
+                    <ion-icon name="add-circle-outline"></ion-icon> Adicionar telefone
+                  </button>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend><span class="section-number">2</span> Endereço comercial</legend>
+              <p class="section-help">Ao alterar o endereço, o backend geocodifica a nova localização e sincroniza os anúncios do sebo.</p>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="cep">CEP *</label>
+                  <input id="cep" type="text" inputmode="numeric" maxlength="9" required>
+                </div>
+                <div class="form-group">
+                  <label for="estado">Estado (UF) *</label>
+                  <input id="estado" type="text" maxlength="2" required>
+                </div>
+                <div class="form-group span-2">
+                  <label for="rua">Rua / logradouro *</label>
+                  <input id="rua" type="text" maxlength="160" required>
+                </div>
+                <div class="form-group">
+                  <label for="numero">Número *</label>
+                  <input id="numero" type="text" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                  <label for="complemento">Complemento</label>
+                  <input id="complemento" type="text" maxlength="100">
+                </div>
+                <div class="form-group">
+                  <label for="bairro">Bairro *</label>
+                  <input id="bairro" type="text" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                  <label for="cidade">Cidade *</label>
+                  <input id="cidade" type="text" maxlength="100" required>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend><span class="section-number">3</span> Horário de funcionamento</legend>
+              <div id="scheduleList" class="schedule-list"></div>
+            </fieldset>
+
+            <p id="formFeedback" class="feedback" role="status" aria-live="polite"></p>
+            <button id="saveSebo" class="button button-primary button-full" type="submit" disabled>
+              Salvar alterações
+            </button>
+          </form>
+        </section>
+      </main>
+      <footer class="site-footer">Estante Parceiros © 2026</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="../js/editar-sebo.js"></script>
+</body>
+</html>

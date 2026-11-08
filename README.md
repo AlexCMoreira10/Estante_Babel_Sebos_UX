@@ -59,9 +59,18 @@ Frontend responsivo para cadastro e autenticação de sebos da Estante de Babel.
 Não abra os HTML diretamente com `file://`: os módulos JavaScript e os provedores de autenticação precisam de uma origem HTTP/HTTPS.
 Antes de usar os novos endpoints no site publicado, publique/deploy as alterações do repositório `backend_v6` na Vercel.
 
+### Modo local isolado para testes
+
+O modo de teste é desativado por padrão. Para ativá-lo explicitamente, sirva o frontend em `localhost` ou `127.0.0.1` e abra a página com `?environment=test`, por exemplo `http://127.0.0.1:5500/html/login.html?environment=test`. A seleção fica restrita à aba atual. Para desativá-la na mesma aba, abra uma página local com `?environment=production`.
+
+Nesse modo, o frontend usa um app Firebase separado, o projeto fictício `demo-estante-babel`, Firebase Auth Emulator em `127.0.0.1:9099` e somente `http://127.0.0.1:3000/api`; chamadas não têm cookies, não seguem redirecionamentos e não recorrem à Vercel. Antes de autenticar ou chamar a API, verifica o Auth Emulator e exige que `GET /api/__test/health` confirme `environment: "test"`, o projeto demo e os Emulators de Auth e Firestore ativos. Se a API local não confirmar esses valores, a operação é bloqueada. Tokens enviados à API devem ser JWTs com `aud` e `iss` do projeto demo. A sessão de teste usa armazenamento de sessão separado e login Google é bloqueado.
+
+**Atenção:** o backend atual ainda não valida tokens reais do Auth Emulator nem oferece a rota de confirmação `GET /api/__test/health`. Os testes HTTP existentes usam middleware com tokens fictícios e o Emulator Suite do backend está configurado somente para Firestore. Portanto, o modo frontend está preparado para isolamento e falha fechado até essas partes serem implementadas no backend. Não use ainda o fluxo completo de login/edição. Nunca remova o modo de fallback da Vercel do ambiente normal para contornar essa limitação.
+
 ## Telas
 
 - `index.html`: página inicial da área de parceiros.
+- `html/editar-sebo.html`: edição do nome, telefones, endereço comercial e horários, exclusiva para o gestor; a localização é geocodificada pelo backend e a tela mostra o estado da sincronização dos anúncios.
 - `html/login.html`: gestores entram por e-mail/senha ou Google; colaboradores entram por login ou telefone e senha temporária. O botão **Funcionário** na página inicial abre o acesso dedicado da equipe.
 - `html/funcionarios.html`: área protegida para subcontas, com validação da sessão e troca obrigatória da senha temporária no primeiro acesso. Colaboradores com a permissão `mensagens.gerenciar` acessam a caixa de entrada compartilhada do sebo para responder, marcar como lida e apagar mensagens recebidas em `html/mensagens.html`.
 - No perfil autenticado do gestor, a seção **Livros cadastrados** mostra os anúncios do acervo do sebo com paginação e QR Codes individuais para rastreamento, que podem ser baixados como PNG. Colaboradores com a permissão `acervo.consultar` também podem consultar o acervo.
