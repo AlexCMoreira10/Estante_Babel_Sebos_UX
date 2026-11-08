@@ -1835,10 +1835,6 @@ input:focus-visible {
   }
 }
 
-/* =========================================
-   NOVA IDENTIDADE VISUAL — CREME E OLIVA
-   Ajuste global de cores e fundos
-   ========================================= */
 :root {
     --page: #f5f1e7;
     --surface: #fffcf5;
