@@ -440,11 +440,9 @@ input:focus-visible {
   .profile-book-card {
     flex-wrap: wrap;
   }
-
   .profile-book-info {
     flex: 1 1 calc(100% - 110px);
   }
-
   .profile-book-qr {
     flex: 1 1 100%;
     grid-template-columns: auto 1fr;
@@ -837,7 +835,6 @@ input:focus-visible {
     width: calc(100% - 36px);
     min-height: 68px;
   }
-
   .home-main,
   .auth-layout {
     width: calc(100% - 36px);
@@ -845,34 +842,27 @@ input:focus-visible {
     gap: 34px;
     padding: 42px 0;
   }
-
   .home-main {
     min-height: auto;
   }
-
   .home-copy h1,
   .auth-intro h1 {
     max-width: 650px;
     font-size: clamp(38px, 8vw, 54px);
   }
-
   .partner-panel {
     min-height: auto;
     padding: 27px;
   }
-
   .auth-layout {
     max-width: 520px;
   }
-
   .auth-intro {
     min-height: auto;
   }
-
   .intro-decoration {
     display: none;
   }
-
   .register-layout {
     width: calc(100% - 32px);
     padding-top: 32px;
@@ -883,139 +873,109 @@ input:focus-visible {
   .site-header {
     width: calc(100% - 28px);
   }
-
   .brand {
     gap: 8px;
     font-size: 16px;
   }
-
   .brand-mark {
     width: 37px;
     height: 37px;
   }
-
   .header-actions {
     gap: 12px;
   }
-
   .header-actions .text-link {
     font-size: 13px;
   }
-
   .header-actions .button {
     min-height: 38px;
     padding: 8px 11px;
     font-size: 12px;
   }
-
   .home-main,
   .auth-layout {
     width: calc(100% - 30px);
     padding: 32px 0;
   }
-
   .home-copy h1,
   .auth-intro h1 {
     font-size: clamp(36px, 10vw, 46px);
   }
-
   .home-description {
     font-size: 15px;
   }
-
   .home-actions {
     display: grid;
   }
-
   .home-actions .button {
     width: 100%;
   }
-
   .auth-layout {
     gap: 22px;
   }
-
   .auth-intro h1 {
     max-width: 450px;
   }
-
   .auth-intro > p:not(.eyebrow) {
     margin: 13px 0 0;
     font-size: 14px;
   }
-
   .auth-card {
     padding: 25px 20px;
     border-radius: 20px;
   }
-
   .register-layout {
     width: calc(100% - 22px);
     padding-top: 25px;
   }
-
   .register-intro {
     padding: 0 8px;
   }
-
   .register-intro h1 {
     font-size: 35px;
   }
-
   .register-intro > p:last-child {
     font-size: 14px;
   }
-
   .register-card {
     padding: 23px 15px;
   }
-
   .form-section {
     padding: 18px 12px;
     gap: 15px;
   }
-
   .form-grid {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-
   .span-2 {
     grid-column: auto;
   }
-
   .form-group .form-grid {
     grid-template-columns: 1fr;
   }
-
   .cep-row {
     align-items: stretch;
     flex-direction: column;
   }
-
   .cep-row .button {
     width: 100%;
   }
-
   .schedule-row {
     grid-template-columns: 1fr;
     gap: 7px;
     padding: 10px;
   }
-
   .schedule-times {
     justify-content: flex-start;
     padding-left: 26px;
   }
-
   .schedule-times input {
     width: min(38vw, 116px);
   }
-
   .coordinate-grid {
     grid-template-columns: 1fr 1fr;
   }
-
   .phone-row {
     align-items: flex-start;
   }
@@ -1229,18 +1189,18 @@ input:focus-visible {
 .staff-layout {
   width: min(1120px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 42px 0 32px;
+  padding: 48px 0 40px;
 }
 
 .staff-heading {
   max-width: 720px;
-  margin-bottom: 22px;
+  margin-bottom: 28px;
 }
 
 .staff-heading h1 {
   margin: 0;
   color: var(--text);
-  font-size: clamp(36px, 5vw, 48px);
+  font-size: clamp(36px, 5vw, 50px);
   letter-spacing: -0.05em;
 }
 
@@ -1255,32 +1215,57 @@ input:focus-visible {
   display: grid;
   grid-template-columns: minmax(330px, 0.9fr) minmax(0, 1.1fr);
   align-items: start;
-  gap: 24px;
+  gap: 28px;
 }
 
 .staff-form-card {
-  padding: 28px;
+  padding: clamp(22px, 3vw, 32px);
+  border-color: rgba(49, 92, 80, 0.1);
+  border-radius: 22px;
+  box-shadow: 0 16px 42px rgba(37, 61, 51, 0.08);
+}
+
+.staff-form-card .auth-card-heading {
+  margin-bottom: 22px;
+  padding-bottom: 19px;
+  border-bottom: 1px solid var(--border);
+}
+
+.staff-form-card .auth-card-heading h2 {
+  font-size: 25px;
+}
+
+.staff-form-card .form-stack {
+  gap: 21px;
 }
 
 .staff-form-card .form-grid {
   align-items: start;
+  gap: 16px;
 }
 
 .staff-form-card .span-2 {
   grid-column: 1 / -1;
 }
 
+.staff-form-card .form-group input:focus-visible,
+.staff-form-card .form-group select:focus-visible {
+  border-color: rgba(49, 92, 80, 0.55);
+  background: white;
+}
+
 .permissions-section {
   display: grid;
-  gap: 15px;
+  gap: 12px;
   margin: 0;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(49, 92, 80, 0.13);
+  border-radius: 16px;
+  background: var(--surface-soft);
 }
 
 .permissions-section legend {
-  padding: 0 7px;
+  padding: 0 8px;
   color: var(--text);
   font-size: 14px;
   font-weight: 720;
@@ -1289,23 +1274,37 @@ input:focus-visible {
 .permission-group {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 12px;
+  gap: 9px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
 }
 
 .permission-group h3 {
   grid-column: 1 / -1;
-  margin: 0 0 1px;
+  margin: 0 0 2px;
   color: var(--green);
   font-size: 13px;
+  letter-spacing: 0.01em;
 }
 
 .permission-group label {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  color: var(--muted);
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: var(--text);
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.permission-group label:hover {
+  background: var(--surface-soft);
 }
 
 .permission-group input {
@@ -1316,11 +1315,20 @@ input:focus-visible {
   accent-color: var(--green);
 }
 
+.permission-group input:focus-visible {
+  outline: 3px solid rgba(49, 92, 80, 0.22);
+  outline-offset: 2px;
+}
+
 .staff-form-actions,
 .staff-card-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
+}
+
+.staff-form-actions {
+  padding-top: 2px;
 }
 
 .staff-list-section {
@@ -1332,7 +1340,8 @@ input:focus-visible {
   align-items: end;
   justify-content: space-between;
   gap: 12px;
-  margin: 5px 0 17px;
+  margin: 3px 0 18px;
+  padding: 0 2px;
 }
 
 .staff-list-heading .eyebrow {
@@ -1341,27 +1350,34 @@ input:focus-visible {
 
 .staff-list-heading h2 {
   margin: 0;
-  font-size: 23px;
+  font-size: 25px;
   letter-spacing: -0.03em;
 }
 
 .staff-list {
   display: grid;
-  gap: 13px;
+  gap: 14px;
 }
 
 .staff-card {
   min-width: 0;
-  padding: 19px;
+  padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 17px;
+  border-radius: 18px;
   background: var(--surface);
-  box-shadow: 0 8px 26px rgba(37, 61, 51, 0.045);
+  box-shadow: 0 8px 24px rgba(37, 61, 51, 0.045);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.staff-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(49, 92, 80, 0.24);
+  box-shadow: 0 13px 30px rgba(37, 61, 51, 0.08);
 }
 
 .staff-card-inactive {
-  background: #f5f5f2;
-  opacity: 0.8;
+  border-color: #e8e4de;
+  background: #faf9f6;
 }
 
 .staff-card-header {
@@ -1380,17 +1396,28 @@ input:focus-visible {
 .staff-role {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .staff-status {
+  display: inline-flex;
   flex: 0 0 auto;
-  padding: 5px 9px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
   border-radius: 999px;
   color: #8a3c31;
   background: #f8e9e5;
   font-size: 11px;
   font-weight: 700;
+}
+
+.staff-status::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
 }
 
 .staff-status.active {
@@ -1401,17 +1428,20 @@ input:focus-visible {
 .staff-details {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 16px 0 12px;
+  gap: 8px;
+  margin: 17px 0 14px;
 }
 
 .staff-details > div {
   min-width: 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--surface-soft);
 }
 
 .staff-details dt {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .staff-details dd {
@@ -1425,17 +1455,19 @@ input:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin: 0 0 15px;
+  margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
 
 .staff-permission-chips li {
-  padding: 5px 8px;
-  border-radius: 7px;
+  padding: 6px 9px;
+  border: 1px solid rgba(49, 92, 80, 0.07);
+  border-radius: 8px;
   color: var(--green);
   background: var(--green-soft);
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .button-danger {
@@ -1731,7 +1763,6 @@ input:focus-visible {
   .staff-management {
     grid-template-columns: 1fr;
   }
-
   .messages-workspace {
     grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
   }
@@ -1742,81 +1773,103 @@ input:focus-visible {
     width: calc(100% - 24px);
     padding-top: 27px;
   }
-
   .staff-form-card {
     padding: 22px 15px;
   }
-
   .staff-form-card .form-grid,
   .staff-form-card .permission-group {
     grid-template-columns: 1fr;
   }
-
   .staff-form-card .span-2,
   .permission-group h3 {
     grid-column: auto;
   }
-
   .staff-list-heading {
     align-items: flex-start;
     flex-direction: column;
   }
-
   .staff-details {
     grid-template-columns: 1fr 1fr;
   }
-
   .staff-card {
     padding: 15px;
   }
-
   .staff-card-actions .button {
     flex: 1 1 130px;
   }
-
   .staff-form-actions .button {
     flex: 1 1 100%;
   }
-
   .password-dialog {
     padding: 22px 17px;
   }
-
   .messages-workspace {
     grid-template-columns: 1fr;
   }
-
   .conversation-panel {
     padding: 13px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
-
   .conversation-list {
     max-height: 220px;
     overflow-y: auto;
   }
-
   .conversation-heading {
     align-items: flex-start;
   }
-
   .chat-panel,
   .chat-content {
     min-height: 470px;
   }
-
   .chat-heading {
     padding: 15px;
   }
-
   .message-list {
     padding: 14px;
   }
-
   .reply-form {
     align-items: stretch;
     flex-direction: column;
     padding: 12px;
   }
+}
+
+/* =========================================
+   NOVA IDENTIDADE VISUAL — CREME E OLIVA
+   Ajuste global de cores e fundos
+   ========================================= */
+:root {
+    --page: #f5f1e7;
+    --surface: #fffcf5;
+    --surface-soft: #eeeadd;
+    --green: #66704b;
+    --green-dark: #3d4932;
+    --green-soft: #e8e9dc;
+    --text: #3d4932;
+    --muted: #887b65;
+    --border: #e5dece;
+    --error: #b42318;
+    --success: #26734d;
+    --shadow: 0 20px 55px rgba(61, 73, 50, 0.08);
+}
+
+/* Fundo geral */
+body {
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(102, 112, 75, 0.07),
+            transparent 28%
+        ),
+        var(--page);
+}
+
+/* Fundo das páginas Ionic */
+ion-app {
+    background: var(--page);
+}
+
+ion-content {
+    --background: var(--page);
 }
