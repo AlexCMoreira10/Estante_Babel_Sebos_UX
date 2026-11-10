@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#315c50">
+  <title>Estante Parceiros | Sebos</title>
+  <link rel="stylesheet" href="https://unpkg.com/@ionic/core@latest/css/ionic.bundle.css">
+  <script type="module" src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ionic/core@latest/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="./css/Main.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "@capacitor/core": "https://esm.sh/@capacitor/core@8.5.2"
+      }
+    }
+  </script>
+</head>
+<body class="home-auth-pending">
+  <ion-app>
+    <ion-content fullscreen>
+      <header class="site-header">
+        <a class="brand" href="./index.html" aria-label="Estante Parceiros, início">
+          <span class="brand-mark"><ion-icon name="book-outline"></ion-icon></span>
+          <span>Estante <strong>Parceiros</strong></span>
+        </a>
+        <nav class="header-actions" aria-label="Acesso">
+          <a class="text-link" href="./html/login.html">Entrar</a>
+          <a class="text-link" href="./html/login.html?tipo=funcionario">Funcionário</a>
+          <a class="button button-primary button-small" href="./html/cadastro.html">Cadastrar sebo</a>
+        </nav>
+      </header>
+
+      <main class="home-main">
+        <section class="home-copy">
+          <p class="eyebrow">Uma comunidade que compartilha histórias</p>
+          <h1>Seu sebo tem um lugar na <span>Estante.</span></h1>
+          <p class="home-description">
+            Conecte seus livros a novos leitores. Cadastre seu estabelecimento e faça parte
+            de uma rede de sebos e pessoas apaixonadas por leitura.
+          </p>
+          <div class="home-actions">
+            <a class="button button-primary" href="./html/cadastro.html">Quero cadastrar meu sebo</a>
+            <a class="button button-secondary" href="./html/login.html">Já tenho cadastro</a>
+          </div>
+          <p class="home-note"><ion-icon name="lock-closed-outline"></ion-icon> Acesso seguro com Firebase Authentication</p>
+        </section>
+
+        <aside id="partnerPanel" class="partner-panel" aria-live="polite">
+          <p class="home-auth-status" role="status">Carregando seu painel...</p>
+          <div class="panel-icon"><ion-icon name="library-outline"></ion-icon></div>
+          <p class="eyebrow">Estante Parceiros</p>
+          <h2>Mais leitores. Mais histórias.</h2>
+          <p>Uma vitrine digital para o acervo e a história do seu sebo.</p>
+          <div class="panel-divider"></div>
+          <p class="panel-foot"><ion-icon name="location-outline"></ion-icon> Presente na sua comunidade</p>
+        </aside>
+      </main>
+      <footer class="site-footer">Estante Parceiros · Conectando sebos e leitores.</footer>
+    </ion-content>
+  </ion-app>
+  <script type="module" src="./js/home.js"></script>
+</body>
+</html>

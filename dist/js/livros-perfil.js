@@ -28,7 +28,7 @@ const formatarPreco = (preco) => {
   }).format(preco);
 };
 
-const renderizarLivro = (livro) => {
+export const renderizarLivro = (livro) => {
   const cartao = criar('article', 'profile-book-card');
   const fotoUrl = Array.isArray(livro.fotos)
     ? livro.fotos.find((foto) => {

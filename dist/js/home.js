@@ -7,12 +7,12 @@ import {
   signOut
 } from './firebase.js';
 import { adicionarAcaoAnunciosEmMassa } from './anuncio-em-massa.js';
-import { adicionarSecaoLivrosPerfil } from './livros-perfil.js';
 
 const painel = document.getElementById('partnerPanel');
 const navegacao = document.querySelector('.header-actions');
 const conteudoInicial = document.querySelector('.home-copy');
 const paginaInicial = document.querySelector('.home-main');
+const cadastroConcluido = new URLSearchParams(window.location.search).get('cadastro') === 'concluido';
 const nomesPermissoes = {
   'acervo.consultar': 'Consultar acervo',
   'acervo.cadastrar': 'Cadastrar livros',
@@ -30,6 +30,16 @@ const criar = (tag, classe = '', texto = '') => {
   if (classe) elemento.className = classe;
   if (texto) elemento.textContent = texto;
   return elemento;
+};
+
+const mostrarAvisoCadastroConcluido = () => {
+  if (!cadastroConcluido) return;
+  painel.prepend(criar('p', 'feedback sucesso', 'Cadastro concluído. Sua conta de parceiro já está pronta.'));
+  window.history.replaceState({}, '', window.location.pathname);
+};
+
+const finalizarCarregamentoInicial = () => {
+  document.body.classList.remove('home-auth-pending');
 };
 
 const aguardarUsuario = () => new Promise((resolve) => {
@@ -140,21 +150,27 @@ const renderizarSessao = (usuario, perfil) => {
   }
 
   const gerenciar = criar('a', 'button button-primary button-full', 'Gerenciar colaboradores');
+  gerenciar.classList.add('profile-manage-button');
   gerenciar.href = './html/subcontas.html';
   const editarSebo = criar('a', 'button button-secondary button-full', 'Editar dados do sebo');
   editarSebo.href = './html/editar-sebo.html';
   const cadastrarLivro = criar('a', 'button button-secondary button-full', 'Cadastrar livros');
   cadastrarLivro.href = './html/cadastrar-livro.html';
-  painel.append(editarSebo, cadastrarLivro);
-  adicionarSecaoLivrosPerfil(painel, () => usuario);
-  adicionarAcaoAnunciosEmMassa(painel, () => usuario);
-  painel.append(gerenciar);
+  const livrosCadastrados = criar('a', 'button button-secondary button-full', 'Livros cadastrados');
+  livrosCadastrados.href = './html/livros-cadastrados.html';
+  const acoes = criar('div', 'profile-actions');
+  acoes.append(editarSebo, cadastrarLivro, livrosCadastrados);
+  adicionarAcaoAnunciosEmMassa(acoes, () => usuario);
+  acoes.append(gerenciar);
+  painel.append(acoes);
 };
 
 const iniciarSessao = async () => {
   const usuario = await aguardarUsuario();
   if (!usuario) {
     limparSessaoSebo();
+    mostrarAvisoCadastroConcluido();
+    finalizarCarregamentoInicial();
     return;
   }
 
@@ -164,24 +180,23 @@ const iniciarSessao = async () => {
     });
     await salvarSessaoSebo(usuario, perfil);
     renderizarSessao(usuario, perfil);
+    mostrarAvisoCadastroConcluido();
   } catch (erro) {
     console.error('Não foi possível validar a sessão do sebo:', erro);
     limparSessaoSebo();
     if (erro.status === 401 || erro.status === 403) {
       await signOut(auth);
       painel.replaceChildren(criar('p', 'feedback erro', erro.message));
+      mostrarAvisoCadastroConcluido();
       return;
     }
     painel.replaceChildren(
       criar('p', 'feedback erro', 'Não foi possível validar a sessão. Verifique sua conexão e tente novamente.')
     );
+    mostrarAvisoCadastroConcluido();
+  } finally {
+    finalizarCarregamentoInicial();
   }
 };
 
 iniciarSessao();
-
-if (new URLSearchParams(window.location.search).get('cadastro') === 'concluido') {
-  const aviso = criar('p', 'feedback sucesso', 'Cadastro concluído. Sua conta de parceiro já está pronta.');
-  painel.prepend(aviso);
-  window.history.replaceState({}, '', window.location.pathname);
-}
