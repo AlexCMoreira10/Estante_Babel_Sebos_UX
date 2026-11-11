@@ -31,7 +31,7 @@ export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
   const descricao = criar(
     'p',
     'section-help',
-    'Baixe o modelo, preencha uma linha por livro e envie o arquivo .xlsx. O relatório mostrará os livros cadastrados e as linhas que precisam de correção.'
+    'Baixe o modelo e preencha uma linha por livro. As medidas do pacote são opcionais, mas devem ser informadas juntas; imagens aceitam até 5 URLs HTTPS públicas separadas por ponto e vírgula. O relatório indica as linhas e os campos que precisam de correção.'
   );
   const modelo = criar('button', 'button button-secondary button-full', 'Baixar planilha modelo');
   modelo.type = 'button';
@@ -85,7 +85,7 @@ export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
         token: await obterUsuario().getIdToken()
       });
       baixarArquivo(resultado.blob, 'modelo-anuncios-livros.xlsx');
-      status.textContent = 'Modelo baixado. Preencha a aba Livros e mantenha os cabeçalhos.';
+      status.textContent = 'Modelo baixado. Preencha a aba Livros, mantenha os cabeçalhos e consulte a aba Instruções.';
       status.classList.add('sucesso');
     } catch (erro) {
       console.error('Erro ao baixar o modelo de anúncios em massa:', erro);
@@ -123,7 +123,7 @@ export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
       const criados = resultado.headers.get('X-Livros-Cadastrados');
       const rejeitados = resultado.headers.get('X-Livros-Rejeitados');
       status.textContent = criados !== null && rejeitados !== null
-        ? `Processamento concluído: ${criados} cadastrados, ${rejeitados} com erro. O relatório foi baixado.`
+        ? `Processamento concluído: ${criados} cadastrados, ${rejeitados} com erro. O relatório baixado indica a linha e o campo de cada erro.`
         : 'Processamento concluído. Consulte o relatório baixado para verificar o resultado de cada linha.';
       status.classList.add('sucesso');
       arquivo.value = '';
