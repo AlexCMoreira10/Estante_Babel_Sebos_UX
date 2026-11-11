@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "assets:android": "capacitor-assets generate --android --assetPath resources/android --androidProject android",
     "cap:sync": "npm run build && cap sync",
     "android:add": "npm run build && cap add android",
     "ios:add": "npm run build && cap add ios"
@@ -16,6 +17,7 @@
     "@capacitor/ios": "^8.5.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
     "@capacitor/cli": "^8.5.2"
   }
 }
