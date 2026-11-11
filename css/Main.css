@@ -223,6 +223,56 @@ input:focus-visible {
   padding: 64px 0;
 }
 
+body[data-home-auth-state="loading"] .home-main,
+body[data-home-auth-state="error"] .home-main {
+  display: none;
+}
+
+body[data-home-auth-state="loading"] .header-actions,
+body[data-home-auth-state="error"] .header-actions,
+body[data-home-auth-state="loading"] .site-footer,
+body[data-home-auth-state="error"] .site-footer {
+  visibility: hidden;
+}
+
+.home-auth-status {
+  display: none;
+  width: min(1060px, calc(100% - 64px));
+  min-height: calc(100vh - 150px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto;
+  color: var(--muted);
+  text-align: center;
+}
+
+body[data-home-auth-state="loading"] .home-auth-status,
+body[data-home-auth-state="error"] .home-auth-status {
+  display: flex;
+}
+
+.home-auth-status p {
+  max-width: 520px;
+  margin: 0;
+}
+
+.home-auth-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(49, 92, 80, 0.18);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: home-auth-spin 0.8s linear infinite;
+}
+
+@keyframes home-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .home-main.signed-in-home {
   grid-template-columns: minmax(0, 560px);
   justify-content: center;

@@ -17,7 +17,7 @@
     }
   </script>
 </head>
-<body>
+<body data-home-auth-state="loading">
   <ion-app>
     <ion-content fullscreen>
       <header class="site-header">
@@ -31,6 +31,11 @@
           <a class="button button-primary button-small" href="./html/cadastro.html">Cadastrar sebo</a>
         </nav>
       </header>
+
+      <div id="homeAuthStatus" class="home-auth-status" role="status" aria-live="polite" aria-atomic="true">
+        <span class="home-auth-spinner" aria-hidden="true"></span>
+        <span>Verificando sua sessão...</span>
+      </div>
 
       <main class="home-main">
         <section class="home-copy">

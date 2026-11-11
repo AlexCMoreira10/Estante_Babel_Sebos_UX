@@ -7,12 +7,21 @@ import {
   signOut
 } from './firebase.js';
 import { adicionarAcaoAnunciosEmMassa } from './anuncio-em-massa.js';
+import { aguardarEstadoAutenticacao } from './home-auth-state.js';
 
 const painel = document.getElementById('partnerPanel');
 const navegacao = document.querySelector('.header-actions');
 const conteudoInicial = document.querySelector('.home-copy');
 const paginaInicial = document.querySelector('.home-main');
+const estadoAutenticacao = document.getElementById('homeAuthStatus');
 const cadastroConcluido = new URLSearchParams(window.location.search).get('cadastro') === 'concluido';
+const TEMPO_LIMITE_AUTENTICACAO_MS = 15000;
+const filhosPublicosIniciais = (elemento) => [...elemento.childNodes].map((filho) => filho.cloneNode(true));
+const navegacaoPublicaInicial = filhosPublicosIniciais(navegacao);
+const painelPublicoInicial = filhosPublicosIniciais(painel);
+let tentativaSessaoAtual = 0;
+let controllerValidacaoAtual = null;
+let avisoCadastroMostrado = false;
 const nomesPermissoes = {
   'acervo.consultar': 'Consultar acervo',
   'acervo.cadastrar': 'Cadastrar livros',
@@ -33,21 +42,60 @@ const criar = (tag, classe = '', texto = '') => {
 };
 
 const mostrarAvisoCadastroConcluido = () => {
-  if (!cadastroConcluido) return;
+  if (!cadastroConcluido || avisoCadastroMostrado) return;
   painel.prepend(criar('p', 'feedback sucesso', 'Cadastro concluído. Sua conta de parceiro já está pronta.'));
   window.history.replaceState({}, '', window.location.pathname);
+  avisoCadastroMostrado = true;
 };
 
-const finalizarCarregamentoInicial = () => {
-  document.body.classList.remove('home-auth-pending');
+const definirEstadoAutenticacao = (estado) => {
+  document.body.dataset.homeAuthState = estado;
 };
 
-const aguardarUsuario = () => new Promise((resolve) => {
-  const cancelar = onAuthStateChanged(auth, (usuario) => {
-    cancelar();
-    resolve(usuario);
+const mostrarCarregamento = () => {
+  estadoAutenticacao.replaceChildren();
+  const indicador = criar('span', 'home-auth-spinner');
+  indicador.setAttribute('aria-hidden', 'true');
+  estadoAutenticacao.append(indicador, criar('span', '', 'Verificando sua sessão...'));
+  definirEstadoAutenticacao('loading');
+};
+
+const mostrarErroInicial = (mensagem, tentarNovamente) => {
+  const aviso = criar('p', 'feedback erro', mensagem);
+  const tentar = criar('button', 'button button-primary', 'Tentar novamente');
+  tentar.type = 'button';
+  tentar.addEventListener('click', async () => {
+    tentar.disabled = true;
+    await tentarNovamente();
   });
-});
+  estadoAutenticacao.replaceChildren(aviso, tentar);
+  definirEstadoAutenticacao('error');
+};
+
+const aguardarUsuario = () => aguardarEstadoAutenticacao(
+  (resolver, rejeitar) => onAuthStateChanged(auth, resolver, rejeitar),
+  TEMPO_LIMITE_AUTENTICACAO_MS
+);
+
+const carregarPerfilSebo = async (usuario, controller) => {
+  const timeout = window.setTimeout(
+    () => controller.abort(),
+    TEMPO_LIMITE_AUTENTICACAO_MS
+  );
+  try {
+    return await requisicaoSebo('sebos/sessao', {
+      token: await usuario.getIdToken(),
+      signal: controller.signal
+    });
+  } catch (erro) {
+    if (controller.signal.aborted) {
+      throw new Error('A validação do perfil demorou demais. Verifique a conexão e tente novamente.');
+    }
+    throw erro;
+  } finally {
+    window.clearTimeout(timeout);
+  }
+};
 
 const sair = async (botao) => {
   botao.disabled = true;
@@ -129,6 +177,7 @@ const renderizarSessao = (usuario, perfil) => {
       ? `Colaborador de ${perfil.seboNome || 'seu sebo'}`
       : (perfil.email || 'Sua conta de sebo está ativa.'))
   );
+  definirEstadoAutenticacao('authenticated');
 
   if (perfil.precisaTrocarSenha) {
     painel.append(
@@ -165,38 +214,85 @@ const renderizarSessao = (usuario, perfil) => {
   painel.append(acoes);
 };
 
-const iniciarSessao = async () => {
-  const usuario = await aguardarUsuario();
+const exibirPaginaPublica = (mensagem) => {
+  navegacao.replaceChildren(...navegacaoPublicaInicial.map((filho) => filho.cloneNode(true)));
+  painel.replaceChildren(...painelPublicoInicial.map((filho) => filho.cloneNode(true)));
+  painel.classList.remove('signed-in-panel');
+  conteudoInicial.hidden = false;
+  paginaInicial.classList.remove('signed-in-home');
+  definirEstadoAutenticacao('unauthenticated');
+  if (mensagem) painel.prepend(criar('p', 'feedback erro', mensagem));
+  mostrarAvisoCadastroConcluido();
+};
+
+const iniciarSessao = async (usuarioConhecido = null) => {
+  const tentativa = ++tentativaSessaoAtual;
+  controllerValidacaoAtual?.abort();
+  const controller = new AbortController();
+  controllerValidacaoAtual = controller;
+  mostrarCarregamento();
+  let usuario = usuarioConhecido;
+  if (!usuario) {
+    try {
+      usuario = await aguardarUsuario();
+    } catch (erro) {
+      if (tentativa !== tentativaSessaoAtual) return;
+      console.error('Não foi possível confirmar a autenticação:', erro);
+      mostrarErroInicial(
+        erro.message || 'Não foi possível confirmar sua sessão. Verifique a conexão e tente novamente.',
+        () => iniciarSessao()
+      );
+      return;
+    }
+  }
+  if (tentativa !== tentativaSessaoAtual) return;
   if (!usuario) {
     limparSessaoSebo();
-    mostrarAvisoCadastroConcluido();
-    finalizarCarregamentoInicial();
+    exibirPaginaPublica();
     return;
   }
 
   try {
-    const perfil = await requisicaoSebo('sebos/sessao', {
-      token: await usuario.getIdToken()
-    });
+    const perfil = await carregarPerfilSebo(usuario, controller);
+    if (tentativa !== tentativaSessaoAtual) return;
     await salvarSessaoSebo(usuario, perfil);
+    if (tentativa !== tentativaSessaoAtual) return;
     renderizarSessao(usuario, perfil);
     mostrarAvisoCadastroConcluido();
   } catch (erro) {
+    if (tentativa !== tentativaSessaoAtual) return;
     console.error('Não foi possível validar a sessão do sebo:', erro);
     limparSessaoSebo();
     if (erro.status === 401 || erro.status === 403) {
-      await signOut(auth);
-      painel.replaceChildren(criar('p', 'feedback erro', erro.message));
-      mostrarAvisoCadastroConcluido();
+      try {
+        await signOut(auth);
+        if (tentativa !== tentativaSessaoAtual) return;
+        exibirPaginaPublica(erro.message);
+      } catch (erroSaida) {
+        console.error('Não foi possível encerrar a sessão inválida:', erroSaida);
+        mostrarErroInicial(
+          'A sessão não pôde ser validada nem encerrada. Tente novamente.',
+          () => iniciarSessao(usuario)
+        );
+      }
       return;
     }
-    painel.replaceChildren(
-      criar('p', 'feedback erro', 'Não foi possível validar a sessão. Verifique sua conexão e tente novamente.')
+    mostrarErroInicial(
+      'Não foi possível validar sua sessão. Verifique a conexão e tente novamente.',
+      () => iniciarSessao(usuario)
     );
-    mostrarAvisoCadastroConcluido();
-  } finally {
-    finalizarCarregamentoInicial();
   }
 };
+
+window.addEventListener('pagehide', () => {
+  tentativaSessaoAtual += 1;
+  controllerValidacaoAtual?.abort();
+  controllerValidacaoAtual = null;
+  mostrarCarregamento();
+});
+
+window.addEventListener('pageshow', (evento) => {
+  if (evento.persisted) iniciarSessao();
+});
 
 iniciarSessao();

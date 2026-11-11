@@ -1,4 +1,10 @@
 import { requisicaoSebo } from './firebase.js';
+import {
+  criarBlobPng,
+  mensagemEntregaArquivo,
+  MIME_PNG,
+  salvarArquivo
+} from './arquivo-download.js';
 
 const criar = (tag, classe = '', texto = '') => {
   const elemento = document.createElement(tag);
@@ -26,6 +32,38 @@ const formatarPreco = (preco) => {
     style: 'currency',
     currency: 'BRL'
   }).format(preco);
+};
+
+export const criarAcaoBaixarQrCode = (livro) => {
+  const controle = criar('div', 'qr-download-control');
+  const baixar = criar('button', 'button button-secondary button-small', 'Baixar QR Code');
+  baixar.type = 'button';
+  const feedback = criar('p', 'feedback qr-download-feedback');
+  feedback.setAttribute('role', 'status');
+  feedback.setAttribute('aria-live', 'polite');
+  feedback.hidden = true;
+  controle.append(baixar, feedback);
+
+  baixar.addEventListener('click', async () => {
+    baixar.disabled = true;
+    feedback.hidden = false;
+    feedback.className = 'feedback qr-download-feedback';
+    feedback.textContent = 'Preparando a imagem PNG...';
+    try {
+      const imagem = await criarBlobPng(livro.qrCode);
+      const nome = `qrcode-livro-${livro.id || 'acervo'}.png`;
+      const entrega = await salvarArquivo(imagem, nome, MIME_PNG);
+      feedback.textContent = mensagemEntregaArquivo(entrega);
+    } catch (erro) {
+      console.error('Erro ao preparar ou compartilhar o QR Code:', erro);
+      feedback.textContent = erro.message || 'Não foi possível preparar o QR Code.';
+      feedback.classList.add('erro');
+    } finally {
+      baixar.disabled = false;
+    }
+  });
+
+  return controle;
 };
 
 export const renderizarLivro = (livro) => {
@@ -73,10 +111,7 @@ export const renderizarLivro = (livro) => {
     imagemQr.src = livro.qrCode;
     imagemQr.alt = `QR Code para rastrear ${livro.titulo || 'este livro'}`;
     imagemQr.loading = 'lazy';
-    const baixar = criar('a', 'button button-secondary button-small', 'Baixar QR Code');
-    baixar.href = livro.qrCode;
-    baixar.download = `qrcode-livro-${livro.id}.png`;
-    areaQr.append(imagemQr, baixar);
+    areaQr.append(imagemQr, criarAcaoBaixarQrCode(livro));
     cartao.append(areaQr);
   }
 

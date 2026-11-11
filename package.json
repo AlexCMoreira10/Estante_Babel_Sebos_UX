@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:native-download": "node scripts/build-native-download.mjs",
     "assets:android": "capacitor-assets generate --android --assetPath resources/android --androidProject android",
     "cap:sync": "npm run build && cap sync",
     "android:add": "npm run build && cap add android",
@@ -14,10 +15,13 @@
     "@capacitor-firebase/authentication": "^8.5.2",
     "@capacitor/android": "^8.5.2",
     "@capacitor/core": "^8.5.2",
-    "@capacitor/ios": "^8.5.2"
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/share": "^8.0.3"
   },
   "devDependencies": {
     "@capacitor/assets": "^4.0.0",
-    "@capacitor/cli": "^8.5.2"
+    "@capacitor/cli": "^8.5.2",
+    "esbuild": "^0.28.2"
   }
 }

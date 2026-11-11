@@ -5,7 +5,7 @@ import {
   requisicaoSebo,
   signOut
 } from './firebase.js';
-import { renderizarLivro } from './livros-perfil.js';
+import { criarAcaoBaixarQrCode, renderizarLivro } from './livros-perfil.js';
 
 const feedback = document.getElementById('catalogFeedback');
 const workspace = document.getElementById('catalogWorkspace');
@@ -83,10 +83,7 @@ const renderizarLinhaTabela = (livro) => {
 
   const celulaQr = adicionarCelula(linha, '');
   if (livro.qrCode) {
-    const baixarQr = criar('a', 'catalog-qr-link', 'Baixar QR Code');
-    baixarQr.href = livro.qrCode;
-    baixarQr.download = `qrcode-livro-${livro.id || 'acervo'}.png`;
-    celulaQr.replaceChildren(baixarQr);
+    celulaQr.replaceChildren(criarAcaoBaixarQrCode(livro));
   }
   return linha;
 };

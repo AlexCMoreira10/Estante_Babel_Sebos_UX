@@ -1,6 +1,11 @@
 import { requisicaoSeboArquivo } from './firebase.js';
+import {
+  MIME_XLSX,
+  mensagemEntregaArquivo,
+  salvarArquivo,
+  validarPlanilhaXlsx
+} from './arquivo-download.js';
 
-const MIME_PLANILHA = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const TAMANHO_MAXIMO = 4 * 1024 * 1024;
 
 const criar = (tag, classe = '', texto = '') => {
@@ -8,15 +13,6 @@ const criar = (tag, classe = '', texto = '') => {
   if (classe) elemento.className = classe;
   if (texto) elemento.textContent = texto;
   return elemento;
-};
-
-const baixarArquivo = (blob, nome) => {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = nome;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
 export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
@@ -84,9 +80,9 @@ export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
       const resultado = await requisicaoSeboArquivo('sebos/livros/importacao/modelo', {
         token: await obterUsuario().getIdToken()
       });
-      baixarArquivo(resultado.blob, 'modelo-anuncios-livros.xlsx');
-      status.textContent = 'Modelo baixado. Preencha a aba Livros, mantenha os cabeçalhos e consulte a aba Instruções.';
-      status.classList.add('sucesso');
+      const planilha = await validarPlanilhaXlsx(resultado.blob);
+      const entrega = await salvarArquivo(planilha, 'modelo-anuncios-livros.xlsx', MIME_XLSX);
+      status.textContent = `${mensagemEntregaArquivo(entrega)} Preencha a aba Livros, mantenha os cabeçalhos e consulte a aba Instruções.`;
     } catch (erro) {
       console.error('Erro ao baixar o modelo de anúncios em massa:', erro);
       mostrarErro(erro);
@@ -116,17 +112,25 @@ export const adicionarAcaoAnunciosEmMassa = (container, obterUsuario) => {
       const resultado = await requisicaoSeboArquivo('sebos/livros/importacao', {
         method: 'POST',
         token: await obterUsuario().getIdToken(),
-        headers: { 'Content-Type': MIME_PLANILHA },
+        headers: { 'Content-Type': MIME_XLSX },
         body: planilha
       });
-      baixarArquivo(resultado.blob, 'resultado-anuncios-livros.xlsx');
-      const criados = resultado.headers.get('X-Livros-Cadastrados');
-      const rejeitados = resultado.headers.get('X-Livros-Rejeitados');
-      status.textContent = criados !== null && rejeitados !== null
-        ? `Processamento concluído: ${criados} cadastrados, ${rejeitados} com erro. O relatório baixado indica a linha e o campo de cada erro.`
-        : 'Processamento concluído. Consulte o relatório baixado para verificar o resultado de cada linha.';
-      status.classList.add('sucesso');
+      const quantidadeCriados = resultado.headers.get('X-Livros-Cadastrados');
+      const quantidadeRejeitados = resultado.headers.get('X-Livros-Rejeitados');
+      const resumo = quantidadeCriados !== null && quantidadeRejeitados !== null
+        ? `Processamento concluído: ${quantidadeCriados} cadastrados, ${quantidadeRejeitados} com erro.`
+        : 'Processamento concluído.';
       arquivo.value = '';
+      try {
+        const relatorio = await validarPlanilhaXlsx(resultado.blob);
+        const entrega = await salvarArquivo(relatorio, 'resultado-anuncios-livros.xlsx', MIME_XLSX);
+        status.textContent = `${resumo} ${mensagemEntregaArquivo(entrega)} Consulte o relatório para verificar os resultados por linha.`;
+        status.classList.add('sucesso');
+      } catch (erroRelatorio) {
+        console.error('Os livros foram processados, mas o relatório não pôde ser entregue:', erroRelatorio);
+        status.textContent = `${resumo} Não foi possível preparar ou compartilhar o relatório: ${erroRelatorio.message} Os livros já foram processados; não reenvie a planilha.`;
+        status.classList.add('erro');
+      }
     } catch (erro) {
       console.error('Erro ao anunciar livros em massa:', erro);
       mostrarErro(erro);
